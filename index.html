@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Vivid Caseload</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>
+  #map { height: 520px; }
+</style>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          50:'#f6f7f2',
+          100:'#e4e8d7',
+          200:'#c8d1af',
+          300:'#aab886',
+          400:'#8da162',
+          500:'#708b42',
+          600:'#5c7336',
+          700:'#485a2b',
+          800:'#34411f',
+          900:'#202813'
+        }
+      }
+    }
+  }
+}
+</script>
+</head>
+
+<body class="bg-brand-50 text-gray-800">
+
+<!-- LOGIN -->
+<div id="login" class="h-screen flex items-center justify-center">
+  <div class="bg-white p-10 rounded-xl shadow w-96">
+    <h1 class="text-2xl font-semibold mb-6 text-center">Caseload Login</h1>
+    <input id="password" type="password" placeholder="Password"
+      class="w-full border p-3 rounded mb-4"/>
+    <button onclick="checkPassword()"
+      class="w-full bg-brand-600 text-white p-3 rounded">Enter</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+<!-- HEADER -->
+<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+  <div class="flex items-center gap-4">
+    <img src="https://vividearlylearning.com.au/wp-content/uploads/2025/07/Vivid-Early-Learning_RGB_Primary-logo_fullcolor-300x142.png" class="h-10"/>
+    <h1 class="text-xl font-semibold">Client Caseload</h1>
+  </div>
+  <div class="flex gap-3">
+    <button onclick="toggleDark()" class="text-sm">Dark</button>
+    <button onclick="showMap()" class="bg-brand-600 text-white px-4 py-2 rounded">Map</button>
+    <button onclick="openForm()" class="bg-brand-700 text-white px-4 py-2 rounded">Add Client</button>
+  </div>
+</header>
+
+<!-- CONTROLS -->
+<div class="p-6 flex gap-4">
+  <input id="search" oninput="renderClients()" placeholder="Search..."
+    class="border p-3 rounded w-full"/>
+  <select id="filterStaff" onchange="renderClients()" class="border p-3 rounded"></select>
+</div>
+
+<!-- TABLE -->
+<div class="px-6 pb-10">
+<table class="w-full bg-white rounded-xl shadow overflow-hidden">
+<thead class="bg-brand-100 text-left text-sm">
+<tr>
+  <th class="p-4">Name</th>
+  <th>Staff</th>
+  <th>Address</th>
+  <th>Notes</th>
+  <th></th>
+</tr>
+</thead>
+<tbody id="clientTable"></tbody>
+</table>
+</div>
+</div>
+
+<!-- FORM MODAL -->
+<div id="formModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+  <div class="bg-white w-[520px] p-8 rounded-xl">
+    <h2 class="text-xl font-semibold mb-4">Client</h2>
+
+    <input id="name" placeholder="Client Name" class="w-full border p-3 rounded mb-3"/>
+    <select id="staff" class="w-full border p-3 rounded mb-3"></select>
+
+    <input id="address" placeholder="Start typing address..."
+      oninput="autoAddress(this.value)"
+      class="w-full border p-3 rounded mb-1"/>
+    <div id="addressList" class="border rounded mb-3 text-sm"></div>
+
+    <textarea id="notes" placeholder="Notes" class="w-full border p-3 rounded mb-4"></textarea>
+
+    <div class="flex justify-between">
+      <button onclick="addStaffPrompt()" class="text-brand-700 text-sm">+ Add Staff</button>
+      <div>
+        <button onclick="saveClient()" class="bg-brand-600 text-white px-4 py-2 rounded mr-2">Save</button>
+        <button onclick="closeForm()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAP -->
+<div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-60 p-8">
+  <div class="bg-white h-full p-4 rounded-xl">
+    <button onclick="closeMap()" class="mb-2 text-sm">Close Map</button>
+    <div id="map"></div>
+  </div>
+</div>
+
+<script>
+let STAFF = JSON.parse(localStorage.getItem("staff")||'["Megan","Lara M","Liv"]');
+let clients = JSON.parse(localStorage.getItem("clients")||"[]");
+let map;
+
+function checkPassword(){
+ if(password.value==="vividearlylearning"){
+  login.classList.add("hidden");
+  app.classList.remove("hidden");
+  initStaff();
+  renderClients();
+ }
+}
+
+function toggleDark(){ document.body.classList.toggle("bg-gray-900"); }
+
+function initStaff(){
+  filterStaff.innerHTML='<option value="">All Staff</option>'+STAFF.map(s=>`<option>${s}</option>`);
+  staff.innerHTML=STAFF.map(s=>`<option>${s}</option>`);
+}
+
+function addStaffPrompt(){
+ const s=prompt("Staff name:");
+ if(s){ STAFF.push(s); localStorage.setItem("staff",JSON.stringify(STAFF)); initStaff(); }
+}
+
+function openForm(){ formModal.classList.remove("hidden"); }
+function closeForm(){ formModal.classList.add("hidden"); }
+
+function saveClient(){
+ const c={
+  name:name.value,
+  staff:staff.value,
+  address:address.value,
+  notes:notes.value
+ };
+ clients.push(c);
+ localStorage.setItem("clients",JSON.stringify(clients));
+ closeForm(); renderClients();
+}
+
+function renderClients(){
+ const s=search.value.toLowerCase();
+ const fs=filterStaff.value;
+ clientTable.innerHTML="";
+ clients.forEach((c,i)=>{
+  if((!fs||c.staff===fs) && JSON.stringify(c).toLowerCase().includes(s)){
+   clientTable.innerHTML+=`
+   <tr class="border-t">
+     <td class="p-4 font-medium">${c.name}</td>
+     <td>${c.staff}</td>
+     <td>${c.address}</td>
+     <td><textarea onchange="updateNotes(${i},this.value)" class="w-full border rounded p-1">${c.notes}</textarea></td>
+     <td><button onclick="showMapSingle('${c.address}')">Map</button></td>
+   </tr>`;
+  }
+ });
+}
+
+function updateNotes(i,v){ clients[i].notes=v; localStorage.setItem("clients",JSON.stringify(clients)); }
+
+/* ADDRESS AUTOCOMPLETE */
+function autoAddress(q){
+ if(q.length<3) return;
+ fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${q}`)
+  .then(r=>r.json())
+  .then(d=>{
+    addressList.innerHTML=d.slice(0,5).map(a=>
+      `<div class="p-2 hover:bg-brand-100 cursor-pointer"
+        onclick="selectAddress('${a.display_name}')">${a.display_name}</div>`
+    ).join('');
+  });
+}
+function selectAddress(a){ address.value=a; addressList.innerHTML=""; }
+
+/* MAP */
+function showMap(){ mapModal.classList.remove("hidden"); initMap(); }
+function closeMap(){ mapModal.classList.add("hidden"); }
+
+function initMap(){
+ if(!map){
+  map=L.map('map').setView([-32.9,151.75],10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+ }
+}
+
+function showMapSingle(addr){
+ showMap();
+ fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${addr}`)
+  .then(r=>r.json())
+  .then(d=>{
+   if(d[0]){
+     L.marker([d[0].lat,d[0].lon]).addTo(map)
+      .bindPopup(addr).openPopup();
+   }
+  });
+}
+</script>
+</body>
+</html>
