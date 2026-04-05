@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Vivid Caseload</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<style>#map{height:380px}</style>
+
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        brand: {500:'#708b42',600:'#5c7336',100:'#e4e8d7'}
+      }
+    }
+  }
+}
+</script>
+</head>
+
+<body class="bg-gray-50 text-gray-800">
+
+<!-- LOGIN -->
+<div id="login" class="h-screen flex items-center justify-center">
+  <div class="bg-white p-10 rounded-xl shadow w-96">
+    <h1 class="text-xl font-semibold mb-4">Caseload Login</h1>
+    <input id="password" type="password" class="w-full border p-3 rounded mb-2"/>
+    <p id="loginError" class="text-red-600 text-sm hidden">Incorrect password</p>
+    <button onclick="checkPassword()" class="w-full bg-brand-600 text-white p-3 rounded mt-3">Enter</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+  <img src="https://vividearlylearning.com.au/wp-content/uploads/2025/07/Vivid-Early-Learning_RGB_Primary-logo_fullcolor-300x142.png" class="h-10"/>
+  <button onclick="openClientModal()" class="bg-brand-600 text-white px-4 py-2 rounded">Add Client</button>
+</header>
+
+<!-- MAP + FILTER PANEL -->
+<div class="flex gap-6 p-6">
+  <div class="w-64 bg-white p-4 rounded-xl shadow text-sm">
+    <h3 class="font-semibold mb-2">Filter by LGA</h3>
+    <div id="lgaFilters"></div>
+    <h3 class="font-semibold mt-4 mb-2">Filter by Staff</h3>
+    <div id="staffFilters"></div>
+  </div>
+  <div id="map" class="flex-1 rounded-xl shadow"></div>
+</div>
+
+<!-- TABLE -->
+<div class="px-6 pb-12">
+<table class="w-full bg-white rounded-xl shadow overflow-hidden text-sm">
+<thead class="bg-brand-100">
+<tr>
+<th class="p-3 text-left">Name</th>
+<th>Session</th>
+<th>LGA</th>
+<th>Lead</th>
+<th>Frequency</th>
+<th></th>
+</tr>
+</thead>
+<tbody id="clientTable"></tbody>
+</table>
+</div>
+</div>
+
+<!-- CLIENT MODAL -->
+<div id="clientModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+  <div class="bg-white w-[600px] p-8 rounded-xl">
+    <h2 class="text-xl font-semibold mb-4">Client Details</h2>
+
+    <input id="c_name" placeholder="Client Name" class="w-full border p-3 rounded mb-3"/>
+
+    <div class="mb-3">
+      <label class="mr-3"><input type="checkbox" value="School" class="stype"/> School</label>
+      <label class="mr-3"><input type="checkbox" value="Home" class="stype"/> Home</label>
+      <label><input type="checkbox" value="Studio" class="stype"/> Studio</label>
+    </div>
+
+    <input id="c_address" placeholder="Address" oninput="autoAddress(this.value)" class="w-full border p-3 rounded mb-1"/>
+    <div id="addressList" class="border rounded mb-3 text-sm"></div>
+
+    <select id="c_lga" class="w-full border p-3 rounded mb-3">
+      <option>Maitland</option><option>Cessnock</option><option>Newcastle</option>
+      <option>Lake Macquarie</option><option>Port Stephens</option><option>Dungog</option>
+    </select>
+
+    <select id="c_freq" class="w-full border p-3 rounded mb-3">
+      <option>Twice weekly</option><option>Weekly</option><option>Fortnightly</option>
+      <option>Monthly</option><option>As needed</option><option>Other</option>
+    </select>
+
+    <select id="c_lead" class="w-full border p-3 rounded mb-3"></select>
+    <input id="c_other" placeholder="Other Therapists" class="w-full border p-3 rounded mb-3"/>
+    <input id="c_phone" placeholder="Contact Number" class="w-full border p-3 rounded mb-3"/>
+
+    <textarea id="c_notes" placeholder="Notes" class="w-full border p-3 rounded mb-4"></textarea>
+
+    <div class="flex justify-between">
+      <button onclick="openStaffModal()" class="text-brand-600 text-sm">+ Add Staff</button>
+      <div>
+        <button onclick="saveClient()" class="bg-brand-600 text-white px-4 py-2 rounded mr-2">Save</button>
+        <button onclick="closeClientModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ADD STAFF MODAL -->
+<div id="staffModal" class="hidden fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+  <div class="bg-white p-6 rounded-xl w-80">
+    <input id="newStaff" placeholder="Staff Name" class="w-full border p-3 rounded mb-3"/>
+    <button onclick="addStaff()" class="bg-brand-600 text-white w-full p-2 rounded">Add</button>
+  </div>
+</div>
+
+<script>
+let STAFF = JSON.parse(localStorage.getItem("staff")||'["Megan","Lara M","Liv"]');
+let clients = JSON.parse(localStorage.getItem("clients")||"[]");
+let map, markers=[];
+
+/* LOGIN */
+function checkPassword(){
+ if(password.value==="vividearlylearning"){
+  login.style.display="none"; app.style.display="block";
+  init();
+ } else loginError.classList.remove("hidden");
+}
+
+/* INIT */
+function init(){
+ initStaff();
+ initFilters();
+ initMap();
+ renderClients();
+}
+
+/* STAFF */
+function initStaff(){
+ c_lead.innerHTML = STAFF.map(s=>`<option>${s}</option>`);
+ staffFilters.innerHTML = STAFF.map(s=>`<label><input type="checkbox" value="${s}" onchange="renderMap()"> ${s}</label><br>`).join('');
+}
+function openStaffModal(){ staffModal.classList.remove("hidden"); }
+function addStaff(){
+ STAFF.push(newStaff.value);
+ localStorage.setItem("staff",JSON.stringify(STAFF));
+ staffModal.classList.add("hidden");
+ initStaff();
+}
+
+/* CLIENT MODAL */
+function openClientModal(){ resetForm(); clientModal.classList.remove("hidden"); }
+function closeClientModal(){ clientModal.classList.add("hidden"); resetForm(); }
+function resetForm(){
+ document.querySelectorAll(".stype").forEach(c=>c.checked=false);
+ c_name.value=c_address.value=c_other.value=c_phone.value=c_notes.value="";
+}
+
+/* SAVE CLIENT */
+function saveClient(){
+ const session=[...document.querySelectorAll(".stype:checked")].map(c=>c.value);
+ const c={
+  name:c_name.value,
+  session:session.join(", "),
+  address:c_address.value,
+  lga:c_lga.value,
+  freq:c_freq.value,
+  lead:c_lead.value,
+  other:c_other.value,
+  phone:c_phone.value,
+  notes:c_notes.value
+ };
+ clients.push(c);
+ localStorage.setItem("clients",JSON.stringify(clients));
+ closeClientModal();
+ renderClients(); renderMap();
+}
+
+/* TABLE */
+function renderClients(){
+ clientTable.innerHTML="";
+ clients.forEach((c,i)=>{
+  clientTable.innerHTML+=`
+  <tr class="border-t">
+    <td class="p-3 font-medium">${c.name}</td>
+    <td>${c.session}</td>
+    <td>${c.lga}</td>
+    <td>${c.lead}</td>
+    <td>${c.freq}</td>
+    <td>✏️</td>
+  </tr>`;
+ });
+}
+
+/* MAP */
+function initMap(){
+ map=L.map('map').setView([-32.9,151.75],10);
+ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+}
+function renderMap(){
+ markers.forEach(m=>map.removeLayer(m)); markers=[];
+ clients.forEach(c=>{
+  fetch(`https://nominatim.openstreetmap.org/search?country=Australia&format=json&q=${c.address}`)
+   .then(r=>r.json()).then(d=>{
+     if(d[0]){
+      const m=L.marker([d[0].lat,d[0].lon]).addTo(map)
+        .bindPopup(`<b>${c.name}</b><br>${c.lead}`);
+      markers.push(m);
+     }
+   });
+ });
+}
+
+/* ADDRESS AU ONLY */
+function autoAddress(q){
+ if(q.length<3) return;
+ fetch(`https://nominatim.openstreetmap.org/search?country=Australia&format=json&q=${q}`)
+  .then(r=>r.json())
+  .then(d=>{
+    addressList.innerHTML=d.slice(0,5).map(a=>
+      `<div class="p-2 hover:bg-brand-100 cursor-pointer"
+        onclick="c_address.value='${a.display_name}';addressList.innerHTML=''">
+        ${a.display_name}
+      </div>`
+    ).join('');
+  });
+}
+
+/* LGA FILTERS */
+function initFilters(){
+ const LGAS=["Maitland","Cessnock","Newcastle","Lake Macquarie","Port Stephens","Dungog"];
+ lgaFilters.innerHTML = LGAS.map(l=>`<label><input type="checkbox" value="${l}" onchange="renderMap()"> ${l}</label><br>`).join('');
+}
+</script>
+</body>
+</html>
