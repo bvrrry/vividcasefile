@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8" />
+  <title>Vivid Early Learning – Caseload</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet/dist/leaflet.css"
+  />
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+  <style>
+    #map { height: 500px; }
+  </style>
+</head>
+<body class="h-full bg-gray-100 dark:bg-gray-900 dark:text-white">
+
+<!-- PASSWORD GATE -->
+<div id="login" class="h-screen flex items-center justify-center">
+  <div class="bg-white dark:bg-gray-800 p-8 rounded shadow w-96">
+    <h1 class="text-2xl font-bold mb-4">Vivid Caseload Login</h1>
+    <input id="password" type="password" placeholder="Enter password"
+      class="w-full border p-2 mb-4 text-black"/>
+    <button onclick="checkPassword()"
+      class="w-full bg-blue-600 text-white p-2 rounded">
+      Enter
+    </button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+  <!-- Banner -->
+  <img src="https://media.licdn.com/dms/image/v2/D563DAQEkL4x_kwUmIQ/image-scale_191_1128/image-scale_191_1128/0/1719123187758/vivid_early_learning_cover?e=2147483647&v=beta&t=EWEK8mWCFV1L2T8nA9vUgmbWkDyG2IgK7v6usyHtCKQ"
+       class="w-full object-cover h-32"/>
+
+  <!-- Header -->
+  <div class="flex justify-between p-4">
+    <h1 class="text-3xl font-bold">Client Caseload</h1>
+    <div>
+      <button onclick="toggleDark()" class="mr-4">🌓</button>
+      <button onclick="showMap()" class="bg-green-600 text-white px-3 py-1 rounded">Map</button>
+      <button onclick="openForm()" class="bg-blue-600 text-white px-3 py-1 rounded">Add Client</button>
+    </div>
+  </div>
+
+  <!-- Search -->
+  <div class="p-4">
+    <input id="search" oninput="renderClients()" placeholder="Search clients..."
+      class="w-full border p-2 text-black"/>
+  </div>
+
+  <!-- Client Table -->
+  <div class="p-4 overflow-auto">
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="text-left border-b">
+          <th>Name</th>
+          <th>Staff</th>
+          <th>Location</th>
+          <th>Suburb</th>
+          <th>LGA</th>
+          <th>Day</th>
+          <th>Notes</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="clientTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- CLIENT FORM MODAL -->
+<div id="formModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+  <div class="bg-white text-black p-6 w-[500px] rounded">
+    <h2 class="text-xl font-bold mb-4">Client</h2>
+
+    <input id="name" placeholder="Client Name" class="w-full border p-2 mb-2"/>
+    <input id="staff" placeholder="Staff Member" class="w-full border p-2 mb-2"/>
+    <input id="location" placeholder="Session Location" class="w-full border p-2 mb-2"/>
+    <input id="suburb" placeholder="Suburb" class="w-full border p-2 mb-2"/>
+    <input id="lga" placeholder="LGA" class="w-full border p-2 mb-2"/>
+    <input id="day" placeholder="Day of Week" class="w-full border p-2 mb-2"/>
+    <textarea id="notes" placeholder="Notes" class="w-full border p-2 mb-2"></textarea>
+
+    <div class="flex justify-end">
+      <button onclick="saveClient()" class="bg-blue-600 text-white px-4 py-2 rounded mr-2">Save</button>
+      <button onclick="closeForm()" class="px-4 py-2">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAP MODAL -->
+<div id="mapModal" class="hidden fixed inset-0 bg-black bg-opacity-70 p-8">
+  <div class="bg-white h-full p-4">
+    <button onclick="closeMap()" class="mb-2">Close</button>
+    <div id="map"></div>
+  </div>
+</div>
+
+<script>
+let clients = JSON.parse(localStorage.getItem("clients") || "[]");
+let editIndex = null;
+
+function checkPassword() {
+  if (document.getElementById("password").value === "vividearlylearning") {
+    document.getElementById("login").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+    renderClients();
+  }
+}
+
+function toggleDark() {
+  document.documentElement.classList.toggle("dark");
+}
+
+function openForm(index=null) {
+  editIndex = index;
+  document.getElementById("formModal").classList.remove("hidden");
+  if (index !== null) {
+    const c = clients[index];
+    name.value = c.name;
+    staff.value = c.staff;
+    location.value = c.location;
+    suburb.value = c.suburb;
+    lga.value = c.lga;
+    day.value = c.day;
+    notes.value = c.notes;
+  }
+}
+
+function closeForm() {
+  document.getElementById("formModal").classList.add("hidden");
+}
+
+function saveClient() {
+  const client = {
+    name: name.value,
+    staff: staff.value,
+    location: location.value,
+    suburb: suburb.value,
+    lga: lga.value,
+    day: day.value,
+    notes: notes.value
+  };
+
+  if (editIndex !== null) clients[editIndex] = client;
+  else clients.push(client);
+
+  localStorage.setItem("clients", JSON.stringify(clients));
+  closeForm();
+  renderClients();
+}
+
+function renderClients() {
+  const tbody = document.getElementById("clientTable");
+  const search = document.getElementById("search").value.toLowerCase();
+  tbody.innerHTML = "";
+
+  clients.forEach((c, i) => {
+    if (JSON.stringify(c).toLowerCase().includes(search)) {
+      tbody.innerHTML += `
+        <tr class="border-b">
+          <td>${c.name}</td>
+          <td>${c.staff}</td>
+          <td>${c.location}</td>
+          <td>${c.suburb}</td>
+          <td>${c.lga}</td>
+          <td>${c.day}</td>
+          <td>${c.notes}</td>
+          <td>
+            <button onclick="openForm(${i})">Edit</button>
+          </td>
+        </tr>`;
+    }
+  });
+}
+
+/* MAP */
+let map;
+function showMap() {
+  document.getElementById("mapModal").classList.remove("hidden");
+  setTimeout(initMap, 200);
+}
+
+function closeMap() {
+  document.getElementById("mapModal").classList.add("hidden");
+}
+
+function initMap() {
+  if (map) return;
+  map = L.map('map').setView([-32.9, 151.75], 10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  clients.forEach(c => {
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${c.suburb}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data[0]) {
+          L.marker([data[0].lat, data[0].lon])
+            .addTo(map)
+            .bindPopup(`<b>${c.name}</b><br>${c.suburb}`);
+        }
+      });
+  });
+}
+</script>
+
+</body>
+</html>
