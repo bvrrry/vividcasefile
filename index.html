@@ -11,6 +11,9 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Firebase SDK (compat v9) -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <style>
     :root {
       --bg: #eceee4;
@@ -46,9 +49,7 @@
       --table-head: #243018;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     @keyframes gradientShift {
       0% { background-position: 0% 50%; }
@@ -71,35 +72,18 @@
       position: fixed;
       inset: 0;
       z-index: -2;
-      background: linear-gradient(
-        125deg,
-        #e8ebe0 0%,
-        #dde2d0 18%,
-        #c5cfa8 40%,
-        #a4b07a 62%,
-        #8a9658 85%,
-        #6f7a42 100%
-      );
+      background: linear-gradient(125deg, #e8ebe0 0%, #dde2d0 18%, #c5cfa8 40%, #a4b07a 62%, #8a9658 85%, #6f7a42 100%);
       background-size: 320% 320%;
       animation: gradientShift 22s ease-in-out infinite;
     }
 
     html[data-theme="dark"] body::before {
-      background: linear-gradient(
-        125deg,
-        #0f140a 0%,
-        #1a2210 22%,
-        #1e2a12 48%,
-        #152010 72%,
-        #0d1208 100%
-      );
+      background: linear-gradient(125deg, #0f140a 0%, #1a2210 22%, #1e2a12 48%, #152010 72%, #0d1208 100%);
       background-size: 320% 320%;
       animation: gradientShift 26s ease-in-out infinite;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
 
     /* ——— Login ——— */
     #login-screen {
@@ -108,9 +92,6 @@
       align-items: center;
       justify-content: center;
       padding: 24px;
-      background: transparent;
-      position: relative;
-      z-index: 0;
     }
 
     .login-card {
@@ -131,10 +112,7 @@
       margin-bottom: 28px;
     }
 
-    .login-logo-wrap img {
-      max-width: 260px;
-      height: auto;
-    }
+    .login-logo-wrap img { max-width: 260px; height: auto; }
 
     .login-title {
       font-size: 1.5rem;
@@ -161,6 +139,7 @@
 
     input[type="password"],
     input[type="text"],
+    input[type="email"],
     input[type="tel"],
     input[type="time"],
     select,
@@ -171,22 +150,18 @@
       border-radius: var(--radius-sm);
       font-family: inherit;
       font-size: 0.9375rem;
+      background: var(--surface);
+      color: var(--text);
       transition: border-color 0.15s, box-shadow 0.15s;
     }
 
-    input:focus,
-    select:focus,
-    textarea:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px var(--primary-soft);
     }
 
-    .field-error {
-      color: var(--danger);
-      font-size: 0.8125rem;
-      margin-top: 6px;
-    }
+    .field-error { color: var(--danger); font-size: 0.8125rem; margin-top: 6px; }
 
     .btn {
       display: inline-flex;
@@ -203,43 +178,16 @@
       transition: background 0.15s, transform 0.1s;
     }
 
-    .btn:active {
-      transform: scale(0.98);
-    }
+    .btn:active { transform: scale(0.98); }
 
-    .btn-primary {
-      background: var(--primary);
-      color: #fff;
-      width: 100%;
-      margin-top: 20px;
-    }
-
-    .btn-primary:hover {
-      background: var(--primary-hover);
-    }
-
-    .btn-secondary {
-      background: var(--surface);
-      color: var(--text);
-      border: 1px solid var(--border);
-    }
-
-    .btn-secondary:hover {
-      background: var(--bg);
-    }
-
-    .btn-ghost {
-      background: transparent;
-      color: var(--primary);
-      padding: 8px 12px;
-    }
+    .btn-primary { background: var(--primary); color: #fff; width: 100%; margin-top: 20px; }
+    .btn-primary:hover { background: var(--primary-hover); }
+    .btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+    .btn-secondary:hover { background: var(--bg); }
+    .btn-ghost { background: transparent; color: var(--primary); padding: 8px 12px; }
 
     /* ——— App shell ——— */
-    #app {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
+    #app { min-height: 100vh; display: flex; flex-direction: column; }
 
     .header {
       position: relative;
@@ -256,35 +204,15 @@
       box-shadow: 0 1px 0 rgba(26, 34, 16, 0.06);
     }
 
-    .header-left {
+    .header-left { display: flex; align-items: center; gap: 20px; }
+
+    .header-logo {
       display: flex;
       align-items: center;
-      gap: 20px;
-      flex-wrap: wrap;
+      text-decoration: none;
     }
 
-    .header-left img {
-      height: 44px;
-      width: auto;
-    }
-
-    .therapist-select-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .therapist-select-wrap label {
-      margin: 0;
-      white-space: nowrap;
-      color: var(--text-muted);
-      font-weight: 500;
-    }
-
-    .therapist-select-wrap select {
-      min-width: 200px;
-      width: auto;
-    }
+    .header-logo img { height: 44px; width: auto; }
 
     .header-actions {
       display: flex;
@@ -294,22 +222,12 @@
       margin-left: auto;
     }
 
-    #btn-mobile-menu-toggle {
-      display: none;
-    }
+    #btn-mobile-menu-toggle { display: none; }
 
-    .header-actions .btn {
-      width: auto;
-    }
+    .header-actions .btn { width: auto; }
 
-    .btn-export {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .btn-export:hover {
-      background: var(--primary-hover);
-    }
+    .btn-export { background: var(--primary); color: #fff; }
+    .btn-export:hover { background: var(--primary-hover); }
 
     .export-split {
       display: inline-flex;
@@ -318,17 +236,8 @@
       box-shadow: var(--shadow);
     }
 
-    .export-split .btn-export {
-      border-radius: 0;
-      margin: 0;
-    }
-
-    .export-split .btn-export-caret {
-      width: 38px;
-      min-width: 38px;
-      padding: 11px 0;
-      border-left: 1px solid rgba(255, 255, 255, 0.25);
-    }
+    .export-split .btn-export { border-radius: 0; margin: 0; }
+    .export-split .btn-export-caret { width: 38px; min-width: 38px; padding: 11px 0; border-left: 1px solid rgba(255,255,255,0.25); }
 
     .export-menu {
       position: absolute;
@@ -359,14 +268,8 @@
       cursor: pointer;
     }
 
-    .export-menu button:hover {
-      background: var(--primary-soft);
-    }
-
-    .export-dropdown-wrap {
-      position: relative;
-      z-index: 4001;
-    }
+    .export-menu button:hover { background: var(--primary-soft); }
+    .export-dropdown-wrap { position: relative; z-index: 4001; }
 
     .main {
       position: relative;
@@ -378,89 +281,25 @@
       width: 100%;
     }
 
+    /* ——— Map section: 30/70 split on desktop ——— */
     .map-section {
       display: grid;
-      grid-template-columns: minmax(280px, 1fr) minmax(280px, 1fr);
+      grid-template-columns: minmax(240px, 3fr) 7fr;
       gap: 20px;
       margin-bottom: 28px;
       align-items: start;
-      max-width: 100%;
     }
 
+    /* Controls panel — accordion, auto height on desktop */
     .map-controls {
       background: var(--surface);
       backdrop-filter: blur(8px);
       border-radius: var(--radius);
       border: 1px solid var(--border);
-      padding: 20px 18px;
+      padding: 14px;
       box-shadow: var(--shadow);
       width: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
-    }
-
-    @media (min-width: 901px) {
-      .map-controls {
-        max-width: 300px;
-        min-height: 0;
-        aspect-ratio: 1;
-        max-height: min(300px, 32vw);
-        padding: 16px 14px;
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-      }
-
-      .map-controls #map-therapy-details {
-        grid-column: 1 / -1;
-      }
-
-      .map-column {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        padding-top: 6px;
-        min-width: 0;
-      }
-
-      .map-wrap {
-        position: relative;
-        width: 100%;
-        max-width: 300px;
-        aspect-ratio: 1;
-        max-height: min(300px, 32vw);
-        border-radius: var(--radius);
-      }
-    }
-
-    @media (max-width: 900px) {
-      .map-section {
-        grid-template-columns: 1fr;
-        gap: 16px;
-      }
-
-      .map-controls {
-        max-width: none;
-        min-height: 0;
-        aspect-ratio: unset;
-        max-height: none;
-        padding: 1rem;
-        display: block;
-      }
-
-      .map-column {
-        width: 100%;
-      }
-
-      .map-wrap {
-        position: relative;
-        width: 100%;
-        max-width: none;
-        aspect-ratio: 4/3;
-        max-height: min(52vh, 420px);
-        min-height: 200px;
-        border-radius: var(--radius);
-      }
+      display: block;
     }
 
     .map-details {
@@ -470,14 +309,14 @@
       background: rgba(209, 250, 229, 0.18);
     }
 
-    html[data-theme="dark"] .map-details {
-      background: rgba(0, 0, 0, 0.12);
-    }
+    html[data-theme="dark"] .map-details { background: rgba(0,0,0,0.12); }
+
+    .map-details + .map-details { margin-top: 8px; }
 
     .map-details summary {
       list-style: none;
       cursor: pointer;
-      padding: 12px 12px;
+      padding: 11px 12px;
       font-size: 0.8125rem;
       font-weight: 700;
       text-transform: uppercase;
@@ -486,25 +325,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      user-select: none;
     }
 
-    .map-details summary::-webkit-details-marker {
-      display: none;
-    }
+    .map-details summary::-webkit-details-marker { display: none; }
+    .map-details summary::after { content: "+"; color: var(--text-muted); font-weight: 800; }
+    .map-details[open] summary::after { content: "−"; }
 
-    .map-details summary:after {
-      content: "+";
-      color: var(--text-muted);
-      font-weight: 800;
-    }
-
-    .map-details[open] summary:after {
-      content: "−";
-    }
-
-    .map-details-body {
-      padding: 10px 12px 12px;
-    }
+    .map-details-body { padding: 8px 12px 12px; }
 
     .therapist-chip {
       display: inline-flex;
@@ -515,16 +343,24 @@
       font-size: 0.8125rem;
       font-weight: 600;
       cursor: pointer;
-      border: 1px solid rgba(0, 0, 0, 0.06);
+      border: 1px solid rgba(0,0,0,0.06);
       margin-bottom: 8px;
       width: 100%;
       box-sizing: border-box;
     }
 
-    .therapist-chip input {
-      accent-color: var(--primary);
-      width: auto;
-      margin: 0;
+    .therapist-chip input { accent-color: var(--primary); width: auto; margin: 0; }
+
+    /* Map column & wrap */
+    .map-column { width: 100%; }
+
+    .map-wrap {
+      position: relative;
+      width: 100%;
+      height: 480px;
+      max-height: 65vh;
+      border-radius: var(--radius);
+      overflow: hidden;
     }
 
     .map-expand-fab {
@@ -546,11 +382,30 @@
       transition: transform 0.12s, background 0.15s;
     }
 
-    .map-expand-fab:hover {
-      background: var(--primary-soft);
-      transform: scale(1.04);
+    .map-expand-fab:hover { background: var(--primary-soft); transform: scale(1.04); }
+
+    #map {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      z-index: 1;
     }
 
+    .map-controls h3 {
+      margin: 0 0 10px;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--text-muted);
+    }
+
+    .checkbox-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 0.875rem; }
+    .checkbox-row input { width: auto; accent-color: var(--primary); }
+
+    /* Map popout */
     .map-popout-overlay {
       position: fixed;
       inset: 0;
@@ -583,55 +438,10 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .map-popout-head span {
-      font-weight: 600;
-      font-size: 0.9375rem;
-    }
+    .map-popout-head span { font-weight: 600; font-size: 0.9375rem; }
+    #map-popout-container { flex: 1; min-height: 0; }
 
-    #map-popout-container {
-      flex: 1;
-      min-height: 0;
-    }
-
-    #map {
-      width: 100%;
-      height: 100%;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
-      box-shadow: var(--shadow);
-      z-index: 1;
-    }
-
-    .map-controls h3 {
-      margin: 0 0 12px;
-      font-size: 0.8125rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
-      color: var(--text-muted);
-    }
-
-    .map-controls .group {
-      margin-bottom: 18px;
-    }
-
-    .map-controls .group:last-child {
-      margin-bottom: 0;
-    }
-
-    .checkbox-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 8px;
-      font-size: 0.875rem;
-    }
-
-    .checkbox-row input {
-      width: auto;
-      accent-color: var(--primary);
-    }
-
+    /* ——— Table ——— */
     .table-card {
       background: var(--surface);
       backdrop-filter: blur(8px);
@@ -651,16 +461,8 @@
       gap: 12px;
     }
 
-    .table-card-head h2 {
-      margin: 0;
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
-
-    .sort-hint {
-      font-size: 0.8125rem;
-      color: var(--text-muted);
-    }
+    .table-card-head h2 { margin: 0; font-size: 1.125rem; font-weight: 600; }
+    .sort-hint { font-size: 0.8125rem; color: var(--text-muted); }
 
     .table-toolbar {
       padding: 12px 20px;
@@ -672,9 +474,7 @@
       background: rgba(212, 220, 200, 0.55);
     }
 
-    html[data-theme="dark"] .table-toolbar {
-      background: rgba(36, 48, 24, 0.45);
-    }
+    html[data-theme="dark"] .table-toolbar { background: rgba(36, 48, 24, 0.45); }
 
     .table-toolbar .field {
       display: flex;
@@ -693,19 +493,11 @@
       color: var(--text-muted);
     }
 
-    .table-toolbar select {
-      margin: 0;
-    }
+    .table-toolbar select { margin: 0; }
 
-    .data-table-wrap {
-      overflow-x: auto;
-    }
+    .data-table-wrap { overflow-x: auto; }
 
-    table.data-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
 
     .data-table th {
       text-align: left;
@@ -719,25 +511,22 @@
       user-select: none;
     }
 
-    .data-table th:hover {
-      color: var(--text);
-    }
+    .data-table th:hover { color: var(--text); }
+    .data-table th .sort-ind { opacity: 0.4; margin-left: 4px; }
+    .data-table th.sorted .sort-ind { opacity: 1; color: var(--primary); }
 
-    .data-table th .sort-ind {
-      opacity: 0.4;
-      margin-left: 4px;
-    }
-
-    .data-table th.sorted .sort-ind {
-      opacity: 1;
-      color: var(--primary);
-    }
-
-    .data-table td {
-      padding: 14px;
+    /* Colour ribbon column */
+    .data-table th.col-ribbon,
+    .data-table td.col-ribbon {
+      width: 5px;
+      min-width: 5px;
+      max-width: 5px;
+      padding: 0;
       border-bottom: 1px solid var(--border);
-      vertical-align: middle;
+      cursor: default;
     }
+
+    .data-table td { padding: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
 
     .data-table tbody tr.client-row {
       cursor: pointer;
@@ -776,17 +565,10 @@
       transition: background 0.15s, color 0.15s;
     }
 
-    .icon-btn:hover {
-      background: var(--bg);
-      color: var(--text);
-    }
+    .icon-btn:hover { background: var(--bg); color: var(--text); }
+    .icon-btn.danger:hover { color: var(--danger); background: rgba(220, 38, 38, 0.08); }
 
-    .icon-btn.danger:hover {
-      color: var(--danger);
-      background: rgba(220, 38, 38, 0.08);
-    }
-
-    /* Modals */
+    /* ——— Modals ——— */
     .overlay {
       position: fixed;
       inset: 0;
@@ -799,10 +581,7 @@
       animation: fadeIn 0.2s ease;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
     .modal {
       background: var(--surface);
@@ -818,9 +597,7 @@
       animation: slideUp 0.22s ease;
     }
 
-    .modal.wide {
-      max-width: 640px;
-    }
+    .modal.wide { max-width: 640px; }
 
     @keyframes slideUp {
       from { transform: translateY(12px); opacity: 0.9; }
@@ -835,11 +612,7 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .modal-head h2 {
-      margin: 0;
-      font-size: 1.125rem;
-      font-weight: 600;
-    }
+    .modal-head h2 { margin: 0; font-size: 1.125rem; font-weight: 600; }
 
     .modal-close {
       width: 40px;
@@ -855,52 +628,16 @@
       transition: background 0.15s, color 0.15s;
     }
 
-    .modal-close:hover {
-      background: var(--border);
-      color: var(--text);
-    }
+    .modal-close:hover { background: var(--border); color: var(--text); }
 
-    .modal-body {
-      padding: 22px;
-      overflow-y: auto;
-    }
+    .modal-body { padding: 22px; overflow-y: auto; }
+    .form-grid { display: grid; gap: 16px; }
 
-    .form-grid {
-      display: grid;
-      gap: 16px;
-    }
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
-    .form-row-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 16px;
-    }
-
-    @media (max-width: 540px) {
-      .form-row-2 {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .session-types {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px 20px;
-    }
-
-    .session-types label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-weight: 400;
-      margin: 0;
-      cursor: pointer;
-    }
-
-    .session-types input {
-      width: auto;
-      accent-color: var(--primary);
-    }
+    .session-types { display: flex; flex-wrap: wrap; gap: 12px 20px; }
+    .session-types label { display: flex; align-items: center; gap: 8px; font-weight: 400; margin: 0; cursor: pointer; }
+    .session-types input { width: auto; accent-color: var(--primary); }
 
     .modal-footer {
       padding: 16px 22px;
@@ -912,49 +649,16 @@
       align-items: center;
     }
 
-    .modal-footer .btn {
-      min-width: 9.5rem;
-      min-height: 44px;
-      padding: 12px 22px;
-      font-size: 0.9375rem;
-      font-weight: 600;
-    }
+    .modal-footer .btn { min-width: 9.5rem; min-height: 44px; padding: 12px 22px; font-size: 0.9375rem; font-weight: 600; }
+    .modal-footer .btn-primary { margin-top: 0 !important; }
 
-    .modal-footer .btn-primary {
-      margin-top: 0 !important;
-    }
+    .staff-list { display: flex; flex-direction: column; gap: 10px; }
+    .staff-item { display: flex; gap: 10px; align-items: center; }
+    .staff-item input { flex: 1; }
 
-    .staff-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .staff-item {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .staff-item input {
-      flex: 1;
-    }
-
-    .comment-item {
-      padding: 12px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.875rem;
-    }
-
-    .comment-item:last-child {
-      border-bottom: none;
-    }
-
-    .comment-meta {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
+    .comment-item { padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 0.875rem; }
+    .comment-item:last-child { border-bottom: none; }
+    .comment-meta { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 4px; }
 
     .detail-grid {
       display: grid;
@@ -963,22 +667,12 @@
       font-size: 0.875rem;
     }
 
-    .detail-grid dt {
-      color: var(--text-muted);
-      font-weight: 500;
-    }
+    .detail-grid dt { color: var(--text-muted); font-weight: 500; }
+    .detail-grid dd { margin: 0; }
 
-    .detail-grid dd {
-      margin: 0;
-    }
+    .empty-state { padding: 48px 24px; text-align: center; color: var(--text-muted); }
 
-    .empty-state {
-      padding: 48px 24px;
-      text-align: center;
-      color: var(--text-muted);
-    }
-
-    /* Footer */
+    /* ——— Footer ——— */
     .footer {
       background: var(--footer-bg);
       color: var(--footer-text);
@@ -991,20 +685,47 @@
       gap: 16px;
     }
 
-    .footer a {
-      color: #c4d89a;
-      text-decoration: none;
-    }
+    .footer a { color: #c4d89a; text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .footer-links { display: flex; gap: 16px; flex-wrap: wrap; align-items: center; }
+    .footer-left { display: flex; flex-direction: column; gap: 8px; }
+    .footer-credit { font-size: 0.875rem; opacity: 0.8; }
 
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    .footer-links {
-      display: flex;
-      gap: 20px;
-      flex-wrap: wrap;
+    .btn-bug-report {
+      display: inline-flex;
       align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: var(--radius-sm);
+      color: var(--footer-text);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+
+    .btn-bug-report:hover { background: rgba(255,255,255,0.18); text-decoration: none; }
+
+    /* Sync status */
+    .sync-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--footer-text);
+      opacity: 0.75;
+    }
+
+    .sync-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #9ca3af;
+      flex-shrink: 0;
+      transition: background 0.3s;
     }
 
     .theme-toggle {
@@ -1021,18 +742,9 @@
       transition: background 0.15s, transform 0.12s;
     }
 
-    .theme-toggle:hover {
-      background: rgba(255, 255, 255, 0.15);
-      transform: scale(1.05);
-    }
+    .theme-toggle:hover { background: rgba(255,255,255,0.15); transform: scale(1.05); }
 
-    .hidden-input {
-      position: absolute;
-      width: 0;
-      height: 0;
-      opacity: 0;
-      pointer-events: none;
-    }
+    .hidden-input { position: absolute; width: 0; height: 0; opacity: 0; pointer-events: none; }
 
     #fc-other-therapists .other-t-row label {
       font-weight: 400;
@@ -1043,173 +755,77 @@
       cursor: pointer;
     }
 
-    #fc-other-therapists .other-t-row input {
-      width: auto;
-      accent-color: var(--primary);
-    }
+    #fc-other-therapists .other-t-row input { width: auto; accent-color: var(--primary); }
 
-    /* ——— Mobile & touch ——— */
+    /* ——— Mobile ——— */
     @media (max-width: 900px) {
-      .header {
-        padding: 12px 14px;
-        flex-direction: column;
-        align-items: stretch;
+      .map-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
       }
 
-      #btn-mobile-menu-toggle {
-        display: inline-flex;
-        margin-left: auto;
-      }
+      .map-controls { padding: 12px; }
 
-      .header-left {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+      .map-wrap {
         width: 100%;
+        height: auto;
+        max-height: none;
+        aspect-ratio: 4/3;
+        min-height: 220px;
       }
 
-      .header-left img {
-        height: 40px;
-      }
+      .header { padding: 12px 14px; flex-direction: column; align-items: stretch; }
 
-      .therapist-select-wrap {
-        width: 100%;
-      }
+      #btn-mobile-menu-toggle { display: inline-flex; margin-left: auto; }
 
-      .therapist-select-wrap select {
-        min-width: 0;
-        width: 100%;
-      }
+      .header-left { flex-direction: row; align-items: center; justify-content: space-between; width: 100%; }
+      .header-logo img { height: 38px; }
 
-      .header-actions {
-        margin-left: 0;
-        width: 100%;
-        display: none;
-      }
-
+      .header-actions { margin-left: 0; width: 100%; display: none; }
       .header-actions.open {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 8px;
       }
 
-      .header-actions .btn-secondary {
-        min-height: 44px;
-        padding: 12px 14px;
-        font-size: 0.8125rem;
-      }
+      .header-actions .btn-secondary { min-height: 44px; padding: 12px 14px; font-size: 0.8125rem; }
+      .export-dropdown-wrap { grid-column: 1 / -1; }
+      .export-split { display: flex; width: 100%; }
+      .export-split .btn-export:first-child { flex: 1; min-width: 0; }
 
-      .export-dropdown-wrap {
-        grid-column: 1 / -1;
-      }
+      .main { padding: 16px 12px; }
 
-      .export-split {
-        display: flex;
-        width: 100%;
-      }
+      .table-card-head { padding: 14px 16px; flex-direction: column; align-items: flex-start; }
+      .table-toolbar { padding: 12px 14px; flex-direction: column; align-items: stretch; gap: 10px; }
+      .table-toolbar .field { min-width: 0; width: 100%; gap: 2px; }
 
-      .export-split .btn-export:first-child {
-        flex: 1;
-        min-width: 0;
-      }
+      .data-table { font-size: 0.8125rem; }
+      .data-table th, .data-table td { padding: 10px 10px; }
 
-      .main {
-        padding: 16px 12px;
-      }
+      .footer { padding: 16px 14px; flex-direction: column; align-items: flex-start; gap: 14px; }
+      .footer-links { width: 100%; flex-wrap: wrap; gap: 10px; }
 
-      .table-card-head {
-        padding: 14px 16px;
-        flex-direction: column;
-        align-items: flex-start;
-      }
+      .login-card { padding: 28px 20px; }
+      .login-logo-wrap img { max-width: min(260px, 88vw); }
 
-      .table-toolbar {
-        padding: 12px 14px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
-      }
+      .overlay { padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)); }
+      .modal { max-height: min(92dvh, 100%); }
+      .modal.wide { max-width: 100%; }
+      .map-popout-overlay { padding: 8px; }
+      .map-popout-inner { width: 100%; height: min(92dvh, 900px); }
 
-      .table-toolbar .field {
-        min-width: 0;
-        width: 100%;
-        gap: 2px;
-      }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-grid dt { margin-top: 8px; }
+      .detail-grid dt:first-child { margin-top: 0; }
 
-      .data-table {
-        font-size: 0.8125rem;
-      }
-
-      .data-table th,
-      .data-table td {
-        padding: 10px 10px;
-      }
-
-      .footer {
-        padding: 16px 14px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
-      }
-
-      .footer-links {
-        width: 100%;
-        justify-content: space-between;
-      }
-
-      .login-card {
-        padding: 28px 20px;
-      }
-
-      .login-logo-wrap img {
-        max-width: min(260px, 88vw);
-      }
-
-      .overlay {
-        padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
-        align-items: center;
-      }
-
-      .modal {
-        max-height: min(92dvh, 100%);
-      }
-
-      .modal.wide {
-        max-width: 100%;
-      }
-
-      .map-popout-overlay {
-        padding: 8px;
-      }
-
-      .map-popout-inner {
-        width: 100%;
-        height: min(92dvh, 900px);
-      }
-
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .detail-grid dt {
-        margin-top: 8px;
-      }
-
-      .detail-grid dt:first-child {
-        margin-top: 0;
-      }
+      .form-row-2 { grid-template-columns: 1fr; }
     }
 
     @media (max-width: 480px) {
-      .header-actions.open {
-        grid-template-columns: 1fr;
-      }
+      .header-actions.open { grid-template-columns: 1fr; }
     }
 
-    .btn,
-    .theme-toggle,
-    .icon-btn,
-    .map-expand-fab {
+    .btn, .theme-toggle, .icon-btn, .map-expand-fab {
       touch-action: manipulation;
       -webkit-tap-highlight-color: transparent;
     }
@@ -1219,14 +835,12 @@
         padding-left: max(12px, env(safe-area-inset-left));
         padding-right: max(12px, env(safe-area-inset-right));
       }
-
-      .footer {
-        padding-bottom: max(16px, env(safe-area-inset-bottom));
-      }
+      .footer { padding-bottom: max(16px, env(safe-area-inset-bottom)); }
     }
   </style>
 </head>
 <body>
+
   <!-- Login -->
   <div id="login-screen">
     <div class="login-card">
@@ -1246,17 +860,13 @@
   <div id="app" class="hidden">
     <header class="header">
       <div class="header-left">
-        <img src="https://vividearlylearning.com.au/wp-content/uploads/2025/07/Vivid-Early-Learning_RGB_Primary-logo_fullcolor-300x142.png" alt="Vivid Early Learning" />
-        <div class="therapist-select-wrap">
-          <label for="header-therapist">Therapist</label>
-          <select id="header-therapist"></select>
-        </div>
+        <a href="https://vividearlylearning.com.au/" target="_blank" rel="noopener" class="header-logo" aria-label="Vivid Early Learning website">
+          <img src="https://vividearlylearning.com.au/wp-content/uploads/2025/07/Vivid-Early-Learning_RGB_Primary-logo_fullcolor-300x142.png" alt="Vivid Early Learning" />
+        </a>
       </div>
       <button type="button" class="icon-btn" id="btn-mobile-menu-toggle" aria-label="Open menu" title="Menu">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-          <path d="M4 6h16" />
-          <path d="M4 12h16" />
-          <path d="M4 18h16" />
+          <path d="M4 6h16"/><path d="M4 12h16"/><path d="M4 18h16"/>
         </svg>
       </button>
       <div class="header-actions" id="header-actions">
@@ -1278,29 +888,32 @@
 
     <main class="main">
       <section class="map-section">
+        <!-- Controls panel (30%) -->
         <aside class="map-controls">
           <details class="map-details" id="map-lga-details">
-            <summary>Map — LGA</summary>
+            <summary>Filter — LGA</summary>
             <div class="map-details-body">
-              <p style="margin:0 0 10px;font-size:0.75rem;color:var(--text-muted);">Filters pins only.</p>
+              <p style="margin:0 0 10px;font-size:0.75rem;color:var(--text-muted);">Filters map pins only.</p>
               <div id="map-lga-checkboxes"></div>
             </div>
           </details>
 
           <details class="map-details" id="map-lead-details">
-            <summary>Map — Lead therapist</summary>
+            <summary>Filter — Lead therapist</summary>
             <div class="map-details-body">
               <div id="map-therapist-checkboxes"></div>
             </div>
           </details>
 
           <details class="map-details" id="map-therapy-details">
-            <summary>Map — Therapy service</summary>
+            <summary>Filter — Therapy service</summary>
             <div class="map-details-body">
               <div id="map-therapy-checkboxes"></div>
             </div>
           </details>
         </aside>
+
+        <!-- Map column (70%) -->
         <div class="map-column">
           <div class="map-wrap">
             <button type="button" class="map-expand-fab" id="btn-map-expand" title="Expand map" aria-label="Expand map">
@@ -1311,6 +924,7 @@
         </div>
       </section>
 
+      <!-- Map popout -->
       <div id="map-popout-overlay" class="map-popout-overlay hidden">
         <div class="map-popout-inner">
           <div class="map-popout-head">
@@ -1323,6 +937,7 @@
         </div>
       </div>
 
+      <!-- Caseload table -->
       <section class="table-card">
         <div class="table-card-head">
           <h2>Caseload</h2>
@@ -1331,27 +946,22 @@
         <div class="table-toolbar">
           <div class="field">
             <label for="filter-table-lga">LGA</label>
-            <select id="filter-table-lga">
-              <option value="">All LGAs</option>
-            </select>
+            <select id="filter-table-lga"><option value="">All LGAs</option></select>
           </div>
           <div class="field">
             <label for="filter-table-lead">Lead therapist</label>
-            <select id="filter-table-lead">
-              <option value="">All leads</option>
-            </select>
+            <select id="filter-table-lead"><option value="">All leads</option></select>
           </div>
           <div class="field">
             <label for="filter-table-therapy">Therapy service</label>
-            <select id="filter-table-therapy">
-              <option value="">All services</option>
-            </select>
+            <select id="filter-table-therapy"><option value="">All services</option></select>
           </div>
         </div>
         <div class="data-table-wrap">
           <table class="data-table" id="clients-table">
             <thead>
               <tr>
+                <th class="col-ribbon" aria-hidden="true"></th>
                 <th data-sort="name">Name <span class="sort-ind">↕</span></th>
                 <th data-sort="address">Address <span class="sort-ind">↕</span></th>
                 <th data-sort="lga">LGA <span class="sort-ind">↕</span></th>
@@ -1370,10 +980,20 @@
     </main>
 
     <footer class="footer">
-      <div>Made with love by Will Berry ♡</div>
+      <div class="footer-left">
+        <span class="footer-credit">Made with love by Will Berry ♡</span>
+        <div class="sync-status" id="sync-status-wrap">
+          <span class="sync-dot" id="sync-dot" title="Sync status"></span>
+          <span id="sync-label">Local only</span>
+        </div>
+      </div>
       <div class="footer-links">
         <a href="#" id="link-archive">View archive</a>
         <a href="#" id="link-reset-filters">Reset all filters</a>
+        <a href="mailto:techsupport@vividel.com.au?subject=VIVID Casefile — Bug / Feature Request" class="btn-bug-report" title="Report a bug or request a feature">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          Report a bug / request a feature
+        </a>
         <button type="button" class="theme-toggle" id="theme-toggle" title="Toggle light / dark theme" aria-label="Toggle theme">
           <span id="theme-icon-sun" class="hidden">
             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -1396,7 +1016,7 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="form-client" class="form-grid">
+        <form id="form-client" class="form-grid" onsubmit="return false;">
           <div>
             <label for="fc-name">Name <span style="color:var(--danger)">*</span></label>
             <input type="text" id="fc-name" required placeholder="Full name" />
@@ -1537,7 +1157,7 @@
     </div>
   </div>
 
-  <!-- Archive view (full page overlay) -->
+  <!-- Archive overlay -->
   <div id="archive-overlay" class="overlay hidden" style="align-items:flex-start;padding-top:40px;">
     <div class="modal wide" style="max-height:85vh;">
       <div class="modal-head">
@@ -1551,6 +1171,7 @@
           <table class="data-table">
             <thead>
               <tr>
+                <th class="col-ribbon" aria-hidden="true"></th>
                 <th>Name</th>
                 <th>Address</th>
                 <th>LGA</th>
@@ -1567,36 +1188,65 @@
   </div>
 
   <script>
-    const APP_PASSWORD = "vividearlylearning";
-    const STORAGE_KEY = "vivid_casefile_v1";
+    /* ================================================================
+       CONFIGURATION — Replace Firebase values with your project details
+       See: https://console.firebase.google.com/
+       ================================================================
 
-    const LGAS = ["Maitland", "Cessnock", "Newcastle", "Lake Macquarie", "Port Stephens", "Dungog"];
-    const THERAPY_SERVICES = ["OT", "Speech", "Behaviour Support", "Early Childhood"];
+       FIREBASE SETUP STEPS:
+       1. Create a project at https://console.firebase.google.com/
+       2. Add a web app to your project
+       3. Enable "Realtime Database" in the Build section
+       4. Copy your config values below
+       5. Set Realtime Database rules (in the Firebase console > Rules tab):
+          {
+            "rules": {
+              ".read": true,
+              ".write": true
+            }
+          }
+          (For production, consider restricting to authenticated users.)
 
+       Until you configure Firebase, the app uses localStorage only.
+       ================================================================ */
+    const FIREBASE_CONFIG = {
+      apiKey:            "REPLACE_API_KEY",
+      authDomain:        "REPLACE_PROJECT_ID.firebaseapp.com",
+      databaseURL:       "https://REPLACE_PROJECT_ID-default-rtdb.firebaseio.com",
+      projectId:         "REPLACE_PROJECT_ID",
+      storageBucket:     "REPLACE_PROJECT_ID.appspot.com",
+      messagingSenderId: "REPLACE_SENDER_ID",
+      appId:             "REPLACE_APP_ID"
+    };
+
+    /* ================================================================ */
+
+    const APP_PASSWORD   = "vividearlylearning";
+    const STORAGE_KEY    = "vivid_casefile_v1";
+    const FIREBASE_DB_PATH = "vivid_casefile_v1";
+
+    const FIREBASE_ENABLED = !FIREBASE_CONFIG.databaseURL.includes("REPLACE");
+
+    const LGAS = ["Maitland","Cessnock","Newcastle","Lake Macquarie","Port Stephens","Dungog"];
+    const THERAPY_SERVICES = ["OT","Speech","Behaviour Support","Early Childhood"];
+
+    // Bold, distinguishable primary colours — one per therapist
     const THERAPIST_PIN_COLORS = [
-      "#4a5c28",
-      "#5c6b3a",
-      "#6b7a42",
-      "#3d5c2e",
-      "#8b6914",
-      "#5c4a2a",
-      "#2f4a32",
-      "#6b5344",
-      "#4a6040",
-      "#556b2f"
+      "#E53935", // Red
+      "#1E88E5", // Blue
+      "#FB8C00", // Orange
+      "#8E24AA", // Purple
+      "#D81B60", // Hot Pink
+      "#00897B", // Teal
+      "#F4511E", // Deep Orange
+      "#3949AB", // Indigo
+      "#00ACC1", // Cyan
+      "#C0CA33", // Lime
     ];
 
     const CSV_HEADERS = [
-      "Name",
-      "Session types",
-      "Address",
-      "LGA",
-      "Frequency",
-      "Lead therapist",
-      "Other therapists",
-      "Contact",
-      "Email",
-      "Therapy Service"
+      "Name","Session types","Address","LGA","Frequency",
+      "Lead therapist","Other therapists","Contact","Email","Therapy Service"
     ];
 
     const defaultState = () => ({
@@ -1627,8 +1277,19 @@
     });
 
     function migrateState(parsed) {
+      // Firebase converts arrays to objects with numeric keys — convert back
+      if (parsed.clients && !Array.isArray(parsed.clients)) {
+        parsed.clients = Object.values(parsed.clients);
+      }
+      if (parsed.staff && !Array.isArray(parsed.staff)) {
+        parsed.staff = Object.values(parsed.staff);
+      }
       parsed.clients.forEach((c) => {
         c.email = c.email || "";
+        if (c.comments && !Array.isArray(c.comments)) c.comments = Object.values(c.comments);
+        c.comments = c.comments || [];
+        if (c.sessionTypes && !Array.isArray(c.sessionTypes)) c.sessionTypes = Object.values(c.sessionTypes);
+        c.sessionTypes = c.sessionTypes || ["home"];
         if (!c.therapyService || !THERAPY_SERVICES.includes(c.therapyService)) {
           c.therapyService = "Early Childhood";
         }
@@ -1636,14 +1297,19 @@
       return parsed;
     }
 
-    let state = loadState();
-    let mapInstance = null;
+    // ——— State ———
+    let state        = loadState();
+    let mapInstance  = null;
     let markersLayer = null;
-    let editingClientId = null;
+    let editingClientId  = null;
     let commentsClientId = null;
-    let sortState = { key: "name", dir: 1 };
+    let sortState    = { key: "name", dir: 1 };
     let staffEditorSnapshot = [];
     let appEventsBound = false;
+    let _appReady    = false;
+    let _db          = null;
+    let _syncRef     = null;
+    let _localWritePending = false;
 
     function loadState() {
       try {
@@ -1652,57 +1318,105 @@
         const parsed = JSON.parse(raw);
         if (!parsed.staff || !parsed.clients) return defaultState();
         return migrateState(parsed);
-      } catch {
-        return defaultState();
-      }
+      } catch { return defaultState(); }
     }
 
     function saveState() {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      const json = JSON.stringify(state);
+      localStorage.setItem(STORAGE_KEY, json);
+      if (FIREBASE_ENABLED && _syncRef) {
+        setSyncStatus("syncing");
+        _localWritePending = true;
+        _syncRef.set(state)
+          .then(() => {
+            setSyncStatus("synced");
+            setTimeout(() => { _localWritePending = false; }, 300);
+          })
+          .catch((err) => {
+            console.error("Firebase write error:", err);
+            _localWritePending = false;
+            setSyncStatus("error");
+          });
+      }
     }
 
-    function uid() {
-      return crypto.randomUUID();
+    // ——— Firebase ———
+    function initFirebase() {
+      if (!FIREBASE_ENABLED) {
+        setSyncStatus("local");
+        return;
+      }
+      try {
+        if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+        _db      = firebase.database();
+        _syncRef = _db.ref(FIREBASE_DB_PATH);
+        setSyncStatus("connecting");
+
+        _syncRef.on("value", (snap) => {
+          if (_localWritePending) {
+            // This echo is from our own write — skip re-render
+            setSyncStatus("synced");
+            return;
+          }
+          if (!snap.exists()) {
+            // No remote data yet — push current local state
+            _syncRef.set(state).catch(console.error);
+            setSyncStatus("synced");
+            return;
+          }
+          const incoming = snap.val();
+          if (!incoming || !incoming.staff || !incoming.clients) return;
+
+          // Compare to avoid needless re-renders when we're the source
+          const incomingStr = JSON.stringify({
+            staff: Array.isArray(incoming.staff) ? incoming.staff : Object.values(incoming.staff),
+            clients: Array.isArray(incoming.clients) ? incoming.clients : Object.values(incoming.clients)
+          });
+          const currentStr = JSON.stringify({ staff: state.staff, clients: state.clients });
+
+          if (incomingStr !== currentStr) {
+            state = migrateState(incoming);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+            if (_appReady) renderAll();
+          }
+          setSyncStatus("synced");
+        }, (err) => {
+          console.error("Firebase read error:", err);
+          setSyncStatus("error");
+        });
+
+      } catch (e) {
+        console.error("Firebase init error:", e);
+        setSyncStatus("error");
+      }
     }
 
-    function normalizeDigits(input) {
-      return String(input ?? "").replace(/\D/g, "");
+    function setSyncStatus(status) {
+      const dot   = document.getElementById("sync-dot");
+      const label = document.getElementById("sync-label");
+      if (!dot || !label) return;
+      const map = {
+        local:      { color: "#9ca3af", text: "Local only (no Firebase)" },
+        connecting: { color: "#f59e0b", text: "Connecting to cloud…" },
+        syncing:    { color: "#f59e0b", text: "Saving…" },
+        synced:     { color: "#22c55e", text: "Synced ✓" },
+        error:      { color: "#ef4444", text: "Sync error — check console" }
+      };
+      const s = map[status] || map.local;
+      dot.style.background = s.color;
+      dot.title            = s.text;
+      label.textContent    = s.text;
     }
 
-    // Formats mobile numbers to "XXXX XXX XXX" (AU-style, based on digit groups).
-    function formatMobileAU(input) {
-      const d = normalizeDigits(input);
-      if (!d) return "";
-      const first4 = d.slice(0, 4);
-      const mid3 = d.slice(4, 7);
-      const last3 = d.slice(7, 10);
-      if (d.length <= 4) return first4;
-      if (d.length <= 7) return `${first4} ${mid3}`;
-      return `${first4} ${mid3} ${last3}`;
-    }
-
-    function therapistColorForName(name) {
-      const i = state.staff.findIndex((s) => s.name === name);
-      const idx = i >= 0 ? i : 0;
-      return THERAPIST_PIN_COLORS[idx % THERAPIST_PIN_COLORS.length];
-    }
-
+    // ——— Theme ———
     if (localStorage.getItem("vivid_theme") === "dark") {
       document.documentElement.setAttribute("data-theme", "dark");
     }
 
     function syncThemeIcons() {
       const dark = document.documentElement.getAttribute("data-theme") === "dark";
-      const sun = document.getElementById("theme-icon-sun");
-      const moon = document.getElementById("theme-icon-moon");
-      if (!sun || !moon) return;
-      if (dark) {
-        sun.classList.remove("hidden");
-        moon.classList.add("hidden");
-      } else {
-        sun.classList.add("hidden");
-        moon.classList.remove("hidden");
-      }
+      document.getElementById("theme-icon-sun")?.classList.toggle("hidden", !dark);
+      document.getElementById("theme-icon-moon")?.classList.toggle("hidden", dark);
     }
 
     function applyTheme(dark) {
@@ -1717,100 +1431,99 @@
     }
 
     function closeExportMenu() {
-      const m = document.getElementById("export-menu");
-      if (m) m.classList.add("hidden");
-      const t = document.getElementById("btn-export-menu-toggle");
-      if (t) t.setAttribute("aria-expanded", "false");
+      document.getElementById("export-menu")?.classList.add("hidden");
+      document.getElementById("btn-export-menu-toggle")?.setAttribute("aria-expanded","false");
+    }
+
+    function uid() { return crypto.randomUUID(); }
+
+    function normalizeDigits(v) { return String(v ?? "").replace(/\D/g,""); }
+
+    function formatMobileAU(v) {
+      const d = normalizeDigits(v);
+      if (!d) return "";
+      if (d.length <= 4)  return d.slice(0,4);
+      if (d.length <= 7)  return `${d.slice(0,4)} ${d.slice(4,7)}`;
+      return `${d.slice(0,4)} ${d.slice(4,7)} ${d.slice(7,10)}`;
+    }
+
+    function therapistColorForName(name) {
+      const i = state.staff.findIndex((s) => s.name === name);
+      return THERAPIST_PIN_COLORS[(i >= 0 ? i : 0) % THERAPIST_PIN_COLORS.length];
     }
 
     // ——— Login ———
-    const loginScreen = document.getElementById("login-screen");
-    const appEl = document.getElementById("app");
-    const loginPassword = document.getElementById("login-password");
-    const loginError = document.getElementById("login-error");
-    const loginSubmit = document.getElementById("login-submit");
+    const loginScreen  = document.getElementById("login-screen");
+    const appEl        = document.getElementById("app");
+    const loginPwInput = document.getElementById("login-password");
+    const loginError   = document.getElementById("login-error");
 
     function tryLogin() {
-      if (loginPassword.value === APP_PASSWORD) {
+      if (loginPwInput.value === APP_PASSWORD) {
         loginError.classList.add("hidden");
-        sessionStorage.setItem("vivid_unlocked", "1");
+        sessionStorage.setItem("vivid_unlocked","1");
         loginScreen.classList.add("hidden");
         appEl.classList.remove("hidden");
         initApp();
       } else {
         loginError.classList.remove("hidden");
-        loginPassword.focus();
+        loginPwInput.focus();
       }
     }
 
-    loginSubmit.addEventListener("click", tryLogin);
-    loginPassword.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") tryLogin();
-    });
+    document.getElementById("login-submit").addEventListener("click", tryLogin);
+    loginPwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") tryLogin(); });
 
     // ——— App init ———
     function initApp() {
+      _appReady = false;
       buildMapFilterUI();
-      populateHeaderTherapist();
       initMap();
       wireEvents();
       syncThemeIcons();
+      populateTableFilterSelects();
       renderAll();
+      _appReady = true;
+      initFirebase();
     }
 
     function wireEvents() {
       if (appEventsBound) return;
       appEventsBound = true;
 
-      const mobileToggle = document.getElementById("btn-mobile-menu-toggle");
+      // Mobile menu
+      const mobileToggle  = document.getElementById("btn-mobile-menu-toggle");
       const headerActions = document.getElementById("header-actions");
-      if (mobileToggle && headerActions) {
-        mobileToggle.addEventListener("click", (e) => {
-          e.stopPropagation();
-          headerActions.classList.toggle("open");
-          mobileToggle.setAttribute("aria-expanded", String(headerActions.classList.contains("open")));
-        });
-        document.addEventListener("click", (e) => {
-          if (!headerActions.contains(e.target) && e.target !== mobileToggle) {
-            headerActions.classList.remove("open");
-            mobileToggle.setAttribute("aria-expanded", "false");
-          }
-        });
-      }
-
-      document.getElementById("header-therapist").addEventListener("change", () => {
-        populateTableFilterSelects();
-        renderAll();
+      mobileToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        headerActions.classList.toggle("open");
+        mobileToggle.setAttribute("aria-expanded", String(headerActions.classList.contains("open")));
       });
+      document.addEventListener("click", (e) => {
+        if (!headerActions.contains(e.target) && e.target !== mobileToggle) {
+          headerActions.classList.remove("open");
+          mobileToggle.setAttribute("aria-expanded","false");
+        }
+      });
+
       document.getElementById("btn-add-client").addEventListener("click", openAddClient);
       document.getElementById("btn-edit-staff").addEventListener("click", openStaffModal);
-      document.getElementById("btn-export").addEventListener("click", () => {
-        closeExportMenu();
-        exportVisibleCsv();
-      });
+
+      document.getElementById("btn-export").addEventListener("click", () => { closeExportMenu(); exportVisibleCsv(); });
       document.getElementById("btn-export-menu-toggle").addEventListener("click", (e) => {
         e.stopPropagation();
-        document.getElementById("export-menu").classList.toggle("hidden");
-        document.getElementById("btn-export-menu-toggle").setAttribute(
-          "aria-expanded",
-          String(!document.getElementById("export-menu").classList.contains("hidden"))
-        );
+        const m = document.getElementById("export-menu");
+        m.classList.toggle("hidden");
+        document.getElementById("btn-export-menu-toggle").setAttribute("aria-expanded", String(!m.classList.contains("hidden")));
       });
-      document.getElementById("menu-export").addEventListener("click", () => {
-        closeExportMenu();
-        exportVisibleCsv();
-      });
-      document.getElementById("menu-import").addEventListener("click", () => {
-        closeExportMenu();
-        document.getElementById("import-file").click();
-      });
+      document.getElementById("menu-export").addEventListener("click", () => { closeExportMenu(); exportVisibleCsv(); });
+      document.getElementById("menu-import").addEventListener("click", () => { closeExportMenu(); document.getElementById("import-file").click(); });
       document.getElementById("import-file").addEventListener("change", onImportFile);
       document.querySelector(".export-dropdown-wrap").addEventListener("click", (e) => e.stopPropagation());
       document.addEventListener("click", () => closeExportMenu());
 
       document.getElementById("theme-toggle").addEventListener("click", () => {
-        const dark = document.documentElement.getAttribute("data-theme") === "dark";
-        applyTheme(!dark);
+        applyTheme(document.documentElement.getAttribute("data-theme") !== "dark");
       });
 
       document.getElementById("btn-map-expand").addEventListener("click", openMapPopout);
@@ -1823,19 +1536,14 @@
       document.getElementById("filter-table-lead").addEventListener("change", renderTable);
       document.getElementById("filter-table-therapy").addEventListener("change", renderTable);
 
+      // Phone auto-format
       const phoneInput = document.getElementById("fc-phone");
-      if (phoneInput) {
-        let t = null;
-        phoneInput.addEventListener("input", (e) => {
-          clearTimeout(t);
-          t = setTimeout(() => {
-            e.target.value = formatMobileAU(e.target.value);
-          }, 200);
-        });
-        phoneInput.addEventListener("blur", (e) => {
-          e.target.value = formatMobileAU(e.target.value);
-        });
-      }
+      let phoneTimer;
+      phoneInput.addEventListener("input", (e) => {
+        clearTimeout(phoneTimer);
+        phoneTimer = setTimeout(() => { e.target.value = formatMobileAU(e.target.value); }, 200);
+      });
+      phoneInput.addEventListener("blur", (e) => { e.target.value = formatMobileAU(e.target.value); });
 
       document.getElementById("fc-lead").addEventListener("change", () => {
         const lead = document.getElementById("fc-lead").value;
@@ -1843,6 +1551,7 @@
         renderOtherTherapistCheckboxes(lead, [...keep]);
       });
 
+      // Client modal
       document.getElementById("modal-client-x").addEventListener("click", closeClientModal);
       document.getElementById("modal-client-cancel").addEventListener("click", closeClientModal);
       document.getElementById("modal-client-save").addEventListener("click", saveClientForm);
@@ -1850,6 +1559,7 @@
         if (e.target.id === "modal-client-overlay") closeClientModal();
       });
 
+      // Staff modal
       document.getElementById("modal-staff-x").addEventListener("click", closeStaffModal);
       document.getElementById("modal-staff-cancel").addEventListener("click", closeStaffModal);
       document.getElementById("modal-staff-save").addEventListener("click", saveStaffChanges);
@@ -1858,41 +1568,39 @@
         if (e.target.id === "modal-staff-overlay") closeStaffModal();
       });
 
+      // Comments modal
       document.getElementById("modal-comments-x").addEventListener("click", closeCommentsModal);
       document.getElementById("comment-add-btn").addEventListener("click", addComment);
       document.getElementById("modal-comments-overlay").addEventListener("click", (e) => {
         if (e.target.id === "modal-comments-overlay") closeCommentsModal();
       });
 
+      // Detail modal
       document.getElementById("modal-detail-x").addEventListener("click", closeDetailModal);
       document.getElementById("modal-detail-close").addEventListener("click", closeDetailModal);
       document.getElementById("modal-detail-overlay").addEventListener("click", (e) => {
         if (e.target.id === "modal-detail-overlay") closeDetailModal();
       });
 
-      document.getElementById("link-archive").addEventListener("click", (e) => {
-        e.preventDefault();
-        openArchive();
-      });
+      document.getElementById("link-archive").addEventListener("click", (e) => { e.preventDefault(); openArchive(); });
       document.getElementById("archive-x").addEventListener("click", closeArchive);
       document.getElementById("archive-overlay").addEventListener("click", (e) => {
         if (e.target.id === "archive-overlay") closeArchive();
       });
 
-      document.getElementById("link-reset-filters").addEventListener("click", (e) => {
-        e.preventDefault();
-        resetAllFilters();
-      });
+      document.getElementById("link-reset-filters").addEventListener("click", (e) => { e.preventDefault(); resetAllFilters(); });
 
+      // Sortable table headers
       document.querySelectorAll(".data-table thead th[data-sort]").forEach((th) => {
         th.addEventListener("click", () => {
           const key = th.getAttribute("data-sort");
-          if (sortState.key === key) sortState.dir *= -1;
-          else {
-            sortState.key = key;
-            sortState.dir = 1;
-          }
-          document.querySelectorAll(".data-table thead th[data-sort]").forEach((h) => h.classList.remove("sorted"));
+          sortState.dir = (sortState.key === key) ? sortState.dir * -1 : 1;
+          sortState.key = key;
+          document.querySelectorAll(".data-table thead th[data-sort]").forEach((h) => {
+            h.classList.remove("sorted");
+            const ind = h.querySelector(".sort-ind");
+            if (ind) ind.textContent = "↕";
+          });
           th.classList.add("sorted");
           th.querySelector(".sort-ind").textContent = sortState.dir === 1 ? "↑" : "↓";
           renderTable();
@@ -1900,7 +1608,9 @@
       });
     }
 
+    // ——— Map filter UI ———
     function buildMapFilterUI() {
+      // LGA checkboxes
       const keepLga = new Set([...document.querySelectorAll(".map-lga:checked")].map((cb) => cb.value));
       const lgaBox = document.getElementById("map-lga-checkboxes");
       lgaBox.innerHTML = "";
@@ -1908,12 +1618,9 @@
         const row = document.createElement("div");
         row.className = "checkbox-row";
         const label = document.createElement("label");
-        label.style.cssText =
-          "display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-weight:400;";
+        label.style.cssText = "display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-weight:400;";
         const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.className = "map-lga";
-        cb.value = lga;
+        cb.type = "checkbox"; cb.className = "map-lga"; cb.value = lga;
         if (keepLga.has(lga)) cb.checked = true;
         cb.addEventListener("change", renderMapMarkers);
         label.appendChild(cb);
@@ -1922,75 +1629,60 @@
         lgaBox.appendChild(row);
       });
 
+      // Therapist chips
       const thBox = document.getElementById("map-therapist-checkboxes");
-      const renderTh = () => {
+      const renderThChips = () => {
         const keep = new Set([...document.querySelectorAll(".map-th:checked")].map((cb) => cb.value));
         thBox.innerHTML = "";
         state.staff.forEach((s, i) => {
           const col = THERAPIST_PIN_COLORS[i % THERAPIST_PIN_COLORS.length];
           const label = document.createElement("label");
           label.className = "therapist-chip";
-          label.style.backgroundColor = col + "40";
+          label.style.backgroundColor = col + "22";
+          label.style.borderColor = col + "88";
           label.style.color = "var(--text)";
-          label.style.borderColor = col + "99";
           const cb = document.createElement("input");
-          cb.type = "checkbox";
-          cb.className = "map-th";
-          cb.value = s.name;
+          cb.type = "checkbox"; cb.className = "map-th"; cb.value = s.name;
           if (keep.has(s.name)) cb.checked = true;
           cb.addEventListener("change", renderMapMarkers);
+          const dot = document.createElement("span");
+          dot.style.cssText = `width:10px;height:10px;border-radius:50%;background:${col};flex-shrink:0;`;
           const span = document.createElement("span");
           span.textContent = s.name;
           label.appendChild(cb);
+          label.appendChild(dot);
           label.appendChild(span);
           thBox.appendChild(label);
         });
       };
-      renderTh();
-      window._renderMapTherapistChecks = renderTh;
+      renderThChips();
+      window._renderMapTherapistChecks = renderThChips;
 
+      // Therapy service checkboxes
       const keepTher = new Set([...document.querySelectorAll(".map-therapy:checked")].map((cb) => cb.value));
-      const therapyBox = document.getElementById("map-therapy-checkboxes");
-      therapyBox.innerHTML = "";
+      const therBox = document.getElementById("map-therapy-checkboxes");
+      therBox.innerHTML = "";
       THERAPY_SERVICES.forEach((svc) => {
         const row = document.createElement("div");
         row.className = "checkbox-row";
         const label = document.createElement("label");
-        label.style.cssText =
-          "display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-weight:400;";
+        label.style.cssText = "display:flex;align-items:center;gap:8px;margin:0;cursor:pointer;font-weight:400;";
         const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.className = "map-therapy";
-        cb.value = svc;
+        cb.type = "checkbox"; cb.className = "map-therapy"; cb.value = svc;
         if (keepTher.has(svc)) cb.checked = true;
         cb.addEventListener("change", renderMapMarkers);
         label.appendChild(cb);
         label.appendChild(document.createTextNode(" " + svc));
         row.appendChild(label);
-        therapyBox.appendChild(row);
+        therBox.appendChild(row);
       });
-    }
-
-    function populateHeaderTherapist() {
-      const sel = document.getElementById("header-therapist");
-      const current = sel.value;
-      sel.innerHTML = `<option value="__all__">All therapists</option>`;
-      state.staff.forEach((s) => {
-        const o = document.createElement("option");
-        o.value = s.name;
-        o.textContent = s.name;
-        sel.appendChild(o);
-      });
-      if (current && [...sel.options].some((o) => o.value === current)) sel.value = current;
-      else sel.value = "__all__";
     }
 
     function populateLeadSelect(selectEl, selectedName) {
       selectEl.innerHTML = "";
       state.staff.forEach((s) => {
         const o = document.createElement("option");
-        o.value = s.name;
-        o.textContent = s.name;
+        o.value = s.name; o.textContent = s.name;
         selectEl.appendChild(o);
       });
       if (selectedName && [...selectEl.options].some((o) => o.value === selectedName)) {
@@ -1999,136 +1691,82 @@
     }
 
     function populateTableFilterSelects() {
-      const lgaSel = document.getElementById("filter-table-lga");
+      const lgaSel  = document.getElementById("filter-table-lga");
       const leadSel = document.getElementById("filter-table-lead");
-      const thSel = document.getElementById("filter-table-therapy");
-      const vLga = lgaSel.value;
-      const vLead = leadSel.value;
-      const vTh = thSel.value;
+      const thSel   = document.getElementById("filter-table-therapy");
+      const vLga = lgaSel.value, vLead = leadSel.value, vTh = thSel.value;
 
       lgaSel.innerHTML = `<option value="">All LGAs</option>`;
       LGAS.forEach((l) => {
         const o = document.createElement("option");
-        o.value = l;
-        o.textContent = l;
-        lgaSel.appendChild(o);
+        o.value = l; o.textContent = l; lgaSel.appendChild(o);
       });
       if (vLga && [...lgaSel.options].some((o) => o.value === vLga)) lgaSel.value = vLga;
 
       leadSel.innerHTML = `<option value="">All leads</option>`;
       state.staff.forEach((s) => {
         const o = document.createElement("option");
-        o.value = s.name;
-        o.textContent = s.name;
-        leadSel.appendChild(o);
+        o.value = s.name; o.textContent = s.name; leadSel.appendChild(o);
       });
       if (vLead && [...leadSel.options].some((o) => o.value === vLead)) leadSel.value = vLead;
 
       thSel.innerHTML = `<option value="">All services</option>`;
       THERAPY_SERVICES.forEach((t) => {
         const o = document.createElement("option");
-        o.value = t;
-        o.textContent = t;
-        thSel.appendChild(o);
+        o.value = t; o.textContent = t; thSel.appendChild(o);
       });
       if (vTh && [...thSel.options].some((o) => o.value === vTh)) thSel.value = vTh;
     }
 
+    // ——— Map ———
     function initMap() {
       if (mapInstance) return;
-      const centre = [-32.85, 151.78];
-      mapInstance = L.map("map", { zoomControl: true }).setView(centre, 9);
+      mapInstance = L.map("map", { zoomControl: true }).setView([-32.85, 151.78], 9);
       L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; CARTO',
-        subdomains: "abcd",
-        maxZoom: 20
+        subdomains: "abcd", maxZoom: 20
       }).addTo(mapInstance);
       markersLayer = L.layerGroup().addTo(mapInstance);
       setTimeout(() => mapInstance.invalidateSize(), 200);
     }
 
     function openMapPopout() {
-      const mapEl = document.getElementById("map");
+      const mapEl  = document.getElementById("map");
       const popHost = document.getElementById("map-popout-container");
       popHost.appendChild(mapEl);
       document.getElementById("map-popout-overlay").classList.remove("hidden");
-      setTimeout(() => {
-        if (mapInstance) mapInstance.invalidateSize(true);
-        renderMapMarkers();
-      }, 320);
+      setTimeout(() => { mapInstance && mapInstance.invalidateSize(true); renderMapMarkers(); }, 320);
     }
 
     function closeMapPopout() {
       const mapEl = document.getElementById("map");
-      const wrap = document.querySelector(".map-wrap");
-      wrap.appendChild(mapEl);
+      document.querySelector(".map-wrap").appendChild(mapEl);
       document.getElementById("map-popout-overlay").classList.add("hidden");
       setTimeout(() => mapInstance && mapInstance.invalidateSize(true), 200);
     }
 
-    function getHeaderTherapistFilter() {
-      const v = document.getElementById("header-therapist").value;
-      return v === "__all__" ? null : v;
-    }
-
-    function visibleClientsForTable() {
-      const headerF = getHeaderTherapistFilter();
-      const lgaF = document.getElementById("filter-table-lga").value || null;
-      const leadF = document.getElementById("filter-table-lead").value || null;
-      const thF = document.getElementById("filter-table-therapy").value || null;
-      return state.clients.filter((c) => {
-        if (c.archived) return false;
-        if (headerF && c.leadTherapist !== headerF) return false;
-        if (lgaF && c.lga !== lgaF) return false;
-        if (leadF && c.leadTherapist !== leadF) return false;
-        if (thF && (c.therapyService || "") !== thF) return false;
-        return true;
-      });
-    }
-
-    function clientsForMap() {
-      return state.clients.filter((c) => !c.archived);
-    }
-
-    function mapFilterLgas() {
-      const checked = [...document.querySelectorAll(".map-lga:checked")].map((c) => c.value);
-      return checked.length ? checked : null;
-    }
-
-    function mapFilterTherapists() {
-      const checked = [...document.querySelectorAll(".map-th:checked")].map((c) => c.value);
-      return checked.length ? checked : null;
-    }
-
-    function mapFilterTherapyServices() {
-      const checked = [...document.querySelectorAll(".map-therapy:checked")].map((c) => c.value);
-      return checked.length ? checked : null;
-    }
+    function mapFilterLgas()   { const c=[...document.querySelectorAll(".map-lga:checked")].map(x=>x.value); return c.length?c:null; }
+    function mapFilterTherapists()    { const c=[...document.querySelectorAll(".map-th:checked")].map(x=>x.value); return c.length?c:null; }
+    function mapFilterTherapyServices() { const c=[...document.querySelectorAll(".map-therapy:checked")].map(x=>x.value); return c.length?c:null; }
 
     function clientPassesMapFilters(c) {
       const lgaF = mapFilterLgas();
-      const thF = mapFilterTherapists();
+      const thF  = mapFilterTherapists();
       const svcF = mapFilterTherapyServices();
       if (lgaF && !lgaF.includes(c.lga)) return false;
-      if (thF && !thF.includes(c.leadTherapist)) return false;
+      if (thF  && !thF.includes(c.leadTherapist)) return false;
       if (svcF && !svcF.includes(c.therapyService || "")) return false;
       return true;
     }
 
     async function geocodeAddress(address) {
       const q = encodeURIComponent(address + ", Australia");
-      const url = `https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`;
       try {
-        const res = await fetch(url, {
-          headers: {
-            "Accept-Language": "en",
-            "User-Agent": "VIVID-Casefile/1.0 (internal caseload tool)"
-          }
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?q=${q}&format=json&limit=1`, {
+          headers: { "Accept-Language": "en", "User-Agent": "VIVID-Casefile/1.0 (internal caseload tool)" }
         });
         const data = await res.json();
-        if (data && data[0]) {
-          return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
-        }
+        if (data && data[0]) return { lat: parseFloat(data[0].lat), lng: parseFloat(data[0].lon) };
       } catch (_) {}
       return null;
     }
@@ -2136,64 +1774,56 @@
     function renderMapMarkers() {
       if (!mapInstance || !markersLayer) return;
       markersLayer.clearLayers();
-      const list = clientsForMap().filter(clientPassesMapFilters);
+      const list   = state.clients.filter((c) => !c.archived && clientPassesMapFilters(c));
       const bounds = [];
       list.forEach((c) => {
-        if (typeof c.lat === "number" && typeof c.lng === "number") {
-          const col = therapistColorForName(c.leadTherapist);
-          const m = L.circleMarker([c.lat, c.lng], {
-            radius: 10,
-            color: col,
-            weight: 2,
-            fillColor: col,
-            fillOpacity: 0.88
-          }).bindPopup(
-            `<strong>${escapeHtml(c.name)}</strong><br>${escapeHtml(c.therapyService || "")}<br>${escapeHtml(c.address)}`
-          );
-          markersLayer.addLayer(m);
-          bounds.push([c.lat, c.lng]);
-        }
+        if (typeof c.lat !== "number" || typeof c.lng !== "number") return;
+        const col = therapistColorForName(c.leadTherapist);
+        const m = L.circleMarker([c.lat, c.lng], {
+          radius: 10, color: "#fff", weight: 2, fillColor: col, fillOpacity: 0.92
+        }).bindPopup(`<strong>${escapeHtml(c.name)}</strong><br>${escapeHtml(c.therapyService||"")}<br>${escapeHtml(c.address)}`);
+        markersLayer.addLayer(m);
+        bounds.push([c.lat, c.lng]);
       });
-      if (bounds.length) {
-        mapInstance.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
-      }
+      if (bounds.length) mapInstance.fitBounds(bounds, { padding: [40,40], maxZoom: 14 });
     }
 
+    // ——— Table rendering ———
     function cmp(a, b) {
-      const sa = String(a ?? "").toLowerCase();
-      const sb = String(b ?? "").toLowerCase();
-      if (sa < sb) return -1;
-      if (sa > sb) return 1;
-      return 0;
+      const sa = String(a ?? "").toLowerCase(), sb = String(b ?? "").toLowerCase();
+      return sa < sb ? -1 : sa > sb ? 1 : 0;
     }
 
     function sortClients(rows) {
-      const key = sortState.key;
-      const dir = sortState.dir;
-      const copy = [...rows];
-      copy.sort((x, y) => {
-        const vx = x[key];
-        const vy = y[key];
-        const d = cmp(vx, vy);
-        return d * dir;
+      return [...rows].sort((x, y) => cmp(x[sortState.key], y[sortState.key]) * sortState.dir);
+    }
+
+    function visibleClientsForTable() {
+      const lgaF  = document.getElementById("filter-table-lga").value  || null;
+      const leadF = document.getElementById("filter-table-lead").value  || null;
+      const thF   = document.getElementById("filter-table-therapy").value || null;
+      return state.clients.filter((c) => {
+        if (c.archived) return false;
+        if (lgaF  && c.lga !== lgaF) return false;
+        if (leadF && c.leadTherapist !== leadF) return false;
+        if (thF   && (c.therapyService || "") !== thF) return false;
+        return true;
       });
-      return copy;
     }
 
     function renderTable() {
       const tbody = document.getElementById("clients-tbody");
       const empty = document.getElementById("clients-empty");
-      const rows = sortClients(visibleClientsForTable());
+      const rows  = sortClients(visibleClientsForTable());
       tbody.innerHTML = "";
-      if (!rows.length) {
-        empty.classList.remove("hidden");
-        return;
-      }
+      if (!rows.length) { empty.classList.remove("hidden"); return; }
       empty.classList.add("hidden");
       rows.forEach((c) => {
-        const tr = document.createElement("tr");
+        const col = therapistColorForName(c.leadTherapist);
+        const tr  = document.createElement("tr");
         tr.className = "client-row";
         tr.innerHTML = `
+          <td class="col-ribbon" style="background:${col};" aria-hidden="true"></td>
           <td>${escapeHtml(c.name)}</td>
           <td>${escapeHtml(c.address)}</td>
           <td>${escapeHtml(c.lga)}</td>
@@ -2213,17 +1843,16 @@
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg>
               </button>
             </div>
-          </td>
-        `;
+          </td>`;
         tr.addEventListener("click", () => openDetail(c.id));
         tr.querySelectorAll("[data-action]").forEach((btn) => {
           btn.addEventListener("click", (ev) => {
             ev.stopPropagation();
-            const id = btn.getAttribute("data-id");
-            const act = btn.getAttribute("data-action");
+            const id  = btn.dataset.id;
+            const act = btn.dataset.action;
             if (act === "comments") openComments(id);
-            if (act === "edit") openEditClient(id);
-            if (act === "archive") archiveClient(id);
+            if (act === "edit")     openEditClient(id);
+            if (act === "archive")  archiveClient(id);
           });
         });
         tbody.appendChild(tr);
@@ -2232,11 +1861,16 @@
 
     function renderAll() {
       if (window._renderMapTherapistChecks) window._renderMapTherapistChecks();
-      populateHeaderTherapist();
+      buildMapFilterUI();
       populateTableFilterSelects();
       renderTable();
       renderMapMarkers();
       setTimeout(() => mapInstance && mapInstance.invalidateSize(), 100);
+    }
+
+    // ——— Client form ———
+    function getSessionTypesFromForm() {
+      return [...document.querySelectorAll('#fc-session-types input[type="checkbox"]:checked')].map((x) => x.value);
     }
 
     function getOtherTherapistsFromForm() {
@@ -2253,8 +1887,7 @@
         row.className = "other-t-row";
         const label = document.createElement("label");
         const cb = document.createElement("input");
-        cb.type = "checkbox";
-        cb.value = s.name;
+        cb.type = "checkbox"; cb.value = s.name;
         if (sel.has(s.name)) cb.checked = true;
         label.appendChild(cb);
         label.appendChild(document.createTextNode(" " + s.name));
@@ -2267,13 +1900,12 @@
       editingClientId = null;
       document.getElementById("modal-client-title").textContent = "Add client";
       document.getElementById("form-client").reset();
-      document.querySelectorAll('#fc-session-types input[type="checkbox"]').forEach((x) => (x.checked = false));
+      document.querySelectorAll('#fc-session-types input[type="checkbox"]').forEach((x) => x.checked = false);
       document.getElementById("fc-session-error").classList.add("hidden");
       document.getElementById("fc-therapy").value = "";
-      document.getElementById("fc-phone").value = "";
-      document.getElementById("fc-email").value = "";
-      const header = getHeaderTherapistFilter();
-      const lead = header || (state.staff[0] && state.staff[0].name);
+      document.getElementById("fc-phone").value   = "";
+      document.getElementById("fc-email").value   = "";
+      const lead = state.staff[0]?.name || "";
       populateLeadSelect(document.getElementById("fc-lead"), lead);
       renderOtherTherapistCheckboxes(lead, []);
       document.getElementById("modal-client-overlay").classList.remove("hidden");
@@ -2284,19 +1916,16 @@
       if (!c) return;
       editingClientId = id;
       document.getElementById("modal-client-title").textContent = "Edit client";
-      document.getElementById("fc-name").value = c.name;
+      document.getElementById("fc-name").value    = c.name;
       document.querySelectorAll('#fc-session-types input[type="checkbox"]').forEach((x) => {
         x.checked = (c.sessionTypes || []).includes(x.value);
       });
-      document.getElementById("fc-address").value = c.address;
-      document.getElementById("fc-lga").value = c.lga;
+      document.getElementById("fc-address").value   = c.address;
+      document.getElementById("fc-lga").value       = c.lga;
       document.getElementById("fc-frequency").value = c.frequency;
-      document.getElementById("fc-therapy").value = c.therapyService || "Early Childhood";
+      document.getElementById("fc-therapy").value   = c.therapyService || "Early Childhood";
       populateLeadSelect(document.getElementById("fc-lead"), c.leadTherapist);
-      const otherParts = String(c.otherTherapists || "")
-        .split(",")
-        .map((x) => x.trim())
-        .filter(Boolean);
+      const otherParts = String(c.otherTherapists || "").split(",").map((x) => x.trim()).filter(Boolean);
       renderOtherTherapistCheckboxes(c.leadTherapist, otherParts);
       document.getElementById("fc-phone").value = formatMobileAU(c.phone);
       document.getElementById("fc-email").value = c.email || "";
@@ -2309,105 +1938,55 @@
       editingClientId = null;
     }
 
-    function getSessionTypesFromForm() {
-      return [...document.querySelectorAll('#fc-session-types input[type="checkbox"]:checked')].map((x) => x.value);
-    }
-
     async function saveClientForm() {
-      const name = document.getElementById("fc-name").value.trim();
-      const types = getSessionTypesFromForm();
-      const address = document.getElementById("fc-address").value.trim();
-      const lga = document.getElementById("fc-lga").value;
-      const frequency = document.getElementById("fc-frequency").value;
-      const lead = document.getElementById("fc-lead").value;
+      const name          = document.getElementById("fc-name").value.trim();
+      const types         = getSessionTypesFromForm();
+      const address       = document.getElementById("fc-address").value.trim();
+      const lga           = document.getElementById("fc-lga").value;
+      const frequency     = document.getElementById("fc-frequency").value;
+      const lead          = document.getElementById("fc-lead").value;
       const therapyService = document.getElementById("fc-therapy").value;
-      const other = getOtherTherapistsFromForm().join(", ");
-      const phone = formatMobileAU(document.getElementById("fc-phone").value.trim());
-      const email = document.getElementById("fc-email").value.trim();
+      const other         = getOtherTherapistsFromForm().join(", ");
+      const phone         = formatMobileAU(document.getElementById("fc-phone").value.trim());
+      const email         = document.getElementById("fc-email").value.trim();
 
       const err = document.getElementById("fc-session-error");
-      if (!types.length) {
-        err.classList.remove("hidden");
-        return;
-      }
+      if (!types.length) { err.classList.remove("hidden"); return; }
       err.classList.add("hidden");
-
       if (!name || !address || !lga || !frequency || !lead || !therapyService || !phone || !email) {
-        alert("Please complete all required fields.");
-        return;
+        alert("Please complete all required fields."); return;
       }
 
       let lat, lng;
       if (editingClientId) {
         const prev = state.clients.find((x) => x.id === editingClientId);
-        if (prev && prev.address === address && typeof prev.lat === "number") {
-          lat = prev.lat;
-          lng = prev.lng;
-        }
+        if (prev && prev.address === address && typeof prev.lat === "number") { lat = prev.lat; lng = prev.lng; }
       }
       if (typeof lat !== "number") {
         const geo = await geocodeAddress(address);
-        if (geo) {
-          lat = geo.lat;
-          lng = geo.lng;
-        } else {
-          lat = -32.85 + (Math.random() - 0.5) * 0.12;
-          lng = 151.78 + (Math.random() - 0.5) * 0.15;
-        }
+        if (geo) { lat = geo.lat; lng = geo.lng; }
+        else     { lat = -32.85 + (Math.random()-0.5)*0.12; lng = 151.78 + (Math.random()-0.5)*0.15; }
       }
 
       if (editingClientId) {
         const c = state.clients.find((x) => x.id === editingClientId);
-        if (c) {
-          Object.assign(c, {
-            name,
-            sessionTypes: types,
-            address,
-            lga,
-            frequency,
-            therapyService,
-            leadTherapist: lead,
-            otherTherapists: other,
-            phone,
-            email,
-            lat,
-            lng
-          });
-        }
+        if (c) Object.assign(c, { name, sessionTypes: types, address, lga, frequency, therapyService, leadTherapist: lead, otherTherapists: other, phone, email, lat, lng });
       } else {
-        state.clients.push({
-          id: uid(),
-          name,
-          sessionTypes: types,
-          address,
-          lat,
-          lng,
-          lga,
-          frequency,
-          therapyService,
-          leadTherapist: lead,
-          otherTherapists: other,
-          phone,
-          email,
-          comments: [],
-          archived: false
-        });
+        state.clients.push({ id: uid(), name, sessionTypes: types, address, lat, lng, lga, frequency, therapyService, leadTherapist: lead, otherTherapists: other, phone, email, comments: [], archived: false });
       }
-
       saveState();
       closeClientModal();
       renderAll();
     }
 
+    // ——— Staff modal ———
     function openStaffModal() {
       staffEditorSnapshot = state.staff.map((s) => ({ id: s.id, name: s.name }));
       renderStaffEditor();
       document.getElementById("modal-staff-overlay").classList.remove("hidden");
     }
 
-    function closeStaffModal() {
-      document.getElementById("modal-staff-overlay").classList.add("hidden");
-    }
+    function closeStaffModal() { document.getElementById("modal-staff-overlay").classList.add("hidden"); }
 
     function renderStaffEditor() {
       const list = document.getElementById("staff-editor-list");
@@ -2420,59 +1999,36 @@
       });
     }
 
-    function addStaffEditorRow() {
-      staffEditorSnapshot.push({ id: uid(), name: "" });
-      renderStaffEditor();
-    }
-
-    function applyStaffRenamesToClients(oldById, newById) {
-      state.clients.forEach((c) => {
-        for (const id of Object.keys(oldById)) {
-          if (!Object.prototype.hasOwnProperty.call(newById, id)) continue;
-          const was = oldById[id];
-          const now = newById[id];
-          if (c.leadTherapist === was) c.leadTherapist = now;
-        }
-        const parts = String(c.otherTherapists || "")
-          .split(",")
-          .map((p) => p.trim())
-          .filter(Boolean);
-        c.otherTherapists = parts
-          .map((p) => {
-            for (const id of Object.keys(oldById)) {
-              if (!Object.prototype.hasOwnProperty.call(newById, id)) continue;
-              if (p === oldById[id]) return newById[id];
-            }
-            return p;
-          })
-          .join(", ");
-      });
-    }
+    function addStaffEditorRow() { staffEditorSnapshot.push({ id: uid(), name: "" }); renderStaffEditor(); }
 
     function saveStaffChanges() {
       const inputs = document.querySelectorAll("#staff-editor-list input");
-      const newNames = [];
-      const idList = [];
+      const newNames = [], idList = [];
       inputs.forEach((inp, idx) => {
         const name = inp.value.trim();
-        if (name) {
-          newNames.push(name);
-          idList.push(staffEditorSnapshot[idx] ? staffEditorSnapshot[idx].id : uid());
-        }
+        if (name) { newNames.push(name); idList.push(staffEditorSnapshot[idx]?.id || uid()); }
       });
-      if (!newNames.length) {
-        alert("Add at least one team member with a name.");
-        return;
-      }
+      if (!newNames.length) { alert("Add at least one team member with a name."); return; }
+
       const oldById = {};
-      state.staff.forEach((s) => {
-        oldById[s.id] = s.name;
-      });
+      state.staff.forEach((s) => { oldById[s.id] = s.name; });
       const newById = {};
-      idList.forEach((id, i) => {
-        newById[id] = newNames[i];
+      idList.forEach((id, i) => { newById[id] = newNames[i]; });
+
+      state.clients.forEach((c) => {
+        for (const id of Object.keys(oldById)) {
+          if (!newById[id]) continue;
+          if (c.leadTherapist === oldById[id]) c.leadTherapist = newById[id];
+        }
+        const parts = String(c.otherTherapists || "").split(",").map((p) => p.trim()).filter(Boolean);
+        c.otherTherapists = parts.map((p) => {
+          for (const id of Object.keys(oldById)) {
+            if (newById[id] && p === oldById[id]) return newById[id];
+          }
+          return p;
+        }).join(", ");
       });
-      applyStaffRenamesToClients(oldById, newById);
+
       state.staff = idList.map((id, i) => ({ id, name: newNames[i] }));
       saveState();
       closeStaffModal();
@@ -2480,6 +2036,7 @@
       renderAll();
     }
 
+    // ——— Comments modal ———
     function openComments(clientId) {
       commentsClientId = clientId;
       const c = state.clients.find((x) => x.id === clientId);
@@ -2491,18 +2048,10 @@
 
     function renderCommentsList(c) {
       const box = document.getElementById("comments-list");
-      if (!c || !c.comments || !c.comments.length) {
-        box.innerHTML = '<p style="margin:0;color:var(--text-muted);font-size:0.875rem;">No notes yet.</p>';
-        return;
-      }
-      box.innerHTML = c.comments
-        .slice()
-        .reverse()
-        .map(
-          (n) =>
-            `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}</div><div>${escapeHtml(n.text)}</div></div>`
-        )
-        .join("");
+      if (!c?.comments?.length) { box.innerHTML = '<p style="margin:0;color:var(--text-muted);font-size:0.875rem;">No notes yet.</p>'; return; }
+      box.innerHTML = c.comments.slice().reverse().map((n) =>
+        `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}</div><div>${escapeHtml(n.text)}</div></div>`
+      ).join("");
     }
 
     function addComment() {
@@ -2512,60 +2061,52 @@
       if (!c) return;
       if (!c.comments) c.comments = [];
       const at = new Date();
-      const atStr = at.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" });
-      c.comments.push({ at: atStr, text, iso: at.toISOString() });
+      c.comments.push({ at: at.toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }), text, iso: at.toISOString() });
       saveState();
       document.getElementById("comment-new").value = "";
       renderCommentsList(c);
     }
 
-    function closeCommentsModal() {
-      document.getElementById("modal-comments-overlay").classList.add("hidden");
-      commentsClientId = null;
-    }
+    function closeCommentsModal() { document.getElementById("modal-comments-overlay").classList.add("hidden"); commentsClientId = null; }
 
+    // ——— Detail modal ———
     function openDetail(id) {
       const c = state.clients.find((x) => x.id === id);
       if (!c) return;
       document.getElementById("detail-name").textContent = c.name;
       const sessionLabel = (c.sessionTypes || []).map((t) => t.charAt(0).toUpperCase() + t.slice(1)).join(", ");
-      let notesHtml = "";
-      if (c.comments && c.comments.length) {
-        notesHtml =
-          "<h3 style='margin:20px 0 10px;font-size:0.875rem;color:var(--text-muted);'>Comment history</h3>" +
-          c.comments
-            .slice()
-            .reverse()
-            .map(
-              (n) =>
-                `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}</div><div>${escapeHtml(n.text)}</div></div>`
-            )
-            .join("");
-      } else {
-        notesHtml = "<p style='color:var(--text-muted);font-size:0.875rem;'>No notes recorded.</p>";
-      }
+      const col = therapistColorForName(c.leadTherapist);
+      let notesHtml = c.comments?.length
+        ? "<h3 style='margin:20px 0 10px;font-size:0.875rem;color:var(--text-muted);'>Comment history</h3>" +
+          c.comments.slice().reverse().map((n) =>
+            `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}</div><div>${escapeHtml(n.text)}</div></div>`
+          ).join("")
+        : "<p style='color:var(--text-muted);font-size:0.875rem;'>No notes recorded.</p>";
+
       document.getElementById("detail-body").innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:18px;">
+          <span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${col};flex-shrink:0;"></span>
+          <span style="font-weight:600;color:var(--text-muted);font-size:0.875rem;">${escapeHtml(c.leadTherapist)}</span>
+        </div>
         <dl class="detail-grid">
           <dt>Name</dt><dd>${escapeHtml(c.name)}</dd>
-          <dt>Therapy service</dt><dd>${escapeHtml(c.therapyService || "")}</dd>
+          <dt>Therapy service</dt><dd>${escapeHtml(c.therapyService||"")}</dd>
           <dt>Session type</dt><dd>${escapeHtml(sessionLabel)}</dd>
           <dt>Address</dt><dd>${escapeHtml(c.address)}</dd>
           <dt>LGA</dt><dd>${escapeHtml(c.lga)}</dd>
           <dt>Frequency</dt><dd>${escapeHtml(c.frequency)}</dd>
           <dt>Lead therapist</dt><dd>${escapeHtml(c.leadTherapist)}</dd>
-          <dt>Other therapists</dt><dd>${escapeHtml(c.otherTherapists) || "—"}</dd>
-          <dt>Mobile contact</dt><dd>${escapeHtml(c.phone || "—")}</dd>
-          <dt>Email</dt><dd>${escapeHtml(c.email || "—")}</dd>
+          <dt>Other therapists</dt><dd>${escapeHtml(c.otherTherapists)||"—"}</dd>
+          <dt>Mobile contact</dt><dd>${escapeHtml(c.phone||"—")}</dd>
+          <dt>Email</dt><dd>${escapeHtml(c.email||"—")}</dd>
         </dl>
-        ${notesHtml}
-      `;
+        ${notesHtml}`;
       document.getElementById("modal-detail-overlay").classList.remove("hidden");
     }
 
-    function closeDetailModal() {
-      document.getElementById("modal-detail-overlay").classList.add("hidden");
-    }
+    function closeDetailModal() { document.getElementById("modal-detail-overlay").classList.add("hidden"); }
 
+    // ——— Archive ———
     function archiveClient(id) {
       if (!confirm("Archive this client? They will move to the archive list.")) return;
       const c = state.clients.find((x) => x.id === id);
@@ -2575,30 +2116,27 @@
     }
 
     function openArchive() {
-      const tbody = document.getElementById("archive-tbody");
-      const empty = document.getElementById("archive-empty");
+      const tbody  = document.getElementById("archive-tbody");
+      const empty  = document.getElementById("archive-empty");
       const archived = state.clients.filter((c) => c.archived);
       tbody.innerHTML = "";
-      if (!archived.length) {
-        empty.classList.remove("hidden");
-      } else {
+      if (!archived.length) { empty.classList.remove("hidden"); }
+      else {
         empty.classList.add("hidden");
         archived.forEach((c) => {
-          const tr = document.createElement("tr");
+          const col = therapistColorForName(c.leadTherapist);
+          const tr  = document.createElement("tr");
           tr.innerHTML = `
+            <td class="col-ribbon" style="background:${col};" aria-hidden="true"></td>
             <td>${escapeHtml(c.name)}</td>
             <td>${escapeHtml(c.address)}</td>
             <td>${escapeHtml(c.lga)}</td>
             <td>${escapeHtml(c.leadTherapist)}</td>
             <td style="text-align:right;">
               <button type="button" class="btn btn-ghost" data-restore="${c.id}" style="padding:6px 12px;">Restore</button>
-            </td>
-          `;
+            </td>`;
           tr.querySelector("[data-restore]").addEventListener("click", () => {
-            c.archived = false;
-            saveState();
-            openArchive();
-            renderAll();
+            c.archived = false; saveState(); openArchive(); renderAll();
           });
           tbody.appendChild(tr);
         });
@@ -2606,60 +2144,47 @@
       document.getElementById("archive-overlay").classList.remove("hidden");
     }
 
-    function closeArchive() {
-      document.getElementById("archive-overlay").classList.add("hidden");
-    }
+    function closeArchive() { document.getElementById("archive-overlay").classList.add("hidden"); }
 
+    // ——— Export / Import ———
     function exportVisibleCsv() {
-      const rows = sortClients(visibleClientsForTable());
+      const rows  = sortClients(visibleClientsForTable());
       const lines = [CSV_HEADERS.join(",")];
       rows.forEach((c) => {
-        const sessionLabel = (c.sessionTypes || []).join("; ");
-        const line = [
+        lines.push([
           csvEscape(c.name),
-          csvEscape(sessionLabel),
+          csvEscape((c.sessionTypes||[]).join("; ")),
           csvEscape(c.address),
           csvEscape(c.lga),
           csvEscape(c.frequency),
           csvEscape(c.leadTherapist),
           csvEscape(c.otherTherapists),
           csvEscape(c.phone),
-          csvEscape(c.email || ""),
-          csvEscape(c.therapyService || "")
-        ];
-        lines.push(line.join(","));
+          csvEscape(c.email||""),
+          csvEscape(c.therapyService||"")
+        ].join(","));
       });
       const blob = new Blob(["\uFEFF" + lines.join("\r\n")], { type: "text/csv;charset=utf-8" });
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob);
-      a.download = `vivid-casefile-${new Date().toISOString().slice(0, 10)}.csv`;
+      a.download = `vivid-casefile-${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
       URL.revokeObjectURL(a.href);
     }
 
     function parseCsvLine(line) {
-      const out = [];
-      let cur = "";
-      let inQ = false;
+      const out = []; let cur = "", inQ = false;
       for (let i = 0; i < line.length; i++) {
         const ch = line[i];
         if (inQ) {
-          if (ch === '"') {
-            if (line[i + 1] === '"') {
-              cur += '"';
-              i++;
-            } else inQ = false;
-          } else cur += ch;
+          if (ch === '"') { if (line[i+1] === '"') { cur += '"'; i++; } else inQ = false; } else cur += ch;
         } else {
           if (ch === '"') inQ = true;
-          else if (ch === ",") {
-            out.push(cur);
-            cur = "";
-          } else cur += ch;
+          else if (ch === ',') { out.push(cur); cur = ""; }
+          else cur += ch;
         }
       }
-      out.push(cur);
-      return out;
+      out.push(cur); return out;
     }
 
     function onImportFile(ev) {
@@ -2669,12 +2194,9 @@
       const reader = new FileReader();
       reader.onload = async () => {
         try {
-          const text = String(reader.result || "").replace(/^\uFEFF/, "");
-          const lines = text.split(/\r?\n/).filter((l) => l.length);
-          if (!lines.length) {
-            alert("The file is empty.");
-            return;
-          }
+          const text    = String(reader.result || "").replace(/^\uFEFF/, "");
+          const lines   = text.split(/\r?\n/).filter((l) => l.length);
+          if (!lines.length) { alert("The file is empty."); return; }
           const headers = parseCsvLine(lines[0]).map((h) => h.trim());
           const idx = {};
           CSV_HEADERS.forEach((h) => {
@@ -2682,90 +2204,48 @@
             if (i >= 0) idx[h] = i;
           });
           if (idx["Name"] === undefined || idx["Address"] === undefined) {
-            alert("Import needs columns matching the export format (at least Name and Address).");
-            return;
+            alert("Import needs columns matching the export format (at least Name and Address)."); return;
           }
           let added = 0;
           for (let r = 1; r < lines.length; r++) {
             const cells = parseCsvLine(lines[r]);
-            const get = (key) => {
-              const i = idx[key];
-              return i !== undefined ? String(cells[i] ?? "").trim() : "";
-            };
-            const name = get("Name");
-            const address = get("Address");
+            const get   = (key) => { const i = idx[key]; return i !== undefined ? String(cells[i]??"").trim() : ""; };
+            const name    = get("Name"), address = get("Address");
             if (!name && !address) continue;
-            const sessionRaw = get("Session types");
-            const sessionTypes = sessionRaw
-              ? sessionRaw
-                  .split(/[;,]/)
-                  .map((s) => s.trim().toLowerCase())
-                  .filter(Boolean)
-              : ["home"];
-            const lga = get("LGA") || "Newcastle";
-            const frequency = get("Frequency") || "Weekly";
-            const leadTherapist = get("Lead therapist") || (state.staff[0] && state.staff[0].name) || "";
+            const sessionRaw    = get("Session types");
+            const sessionTypes  = sessionRaw ? sessionRaw.split(/[;,]/).map((s)=>s.trim().toLowerCase()).filter(Boolean) : ["home"];
+            const lga           = get("LGA") || "Newcastle";
+            const frequency     = get("Frequency") || "Weekly";
+            const leadTherapist = get("Lead therapist") || state.staff[0]?.name || "";
             const otherTherapists = get("Other therapists");
-            const phone = get("Contact") || "";
-            const email = get("Email") || "";
-            let therapyService = get("Therapy Service");
-            if (!therapyService || !THERAPY_SERVICES.includes(therapyService)) {
-              therapyService = "Early Childhood";
-            }
-            let lat;
-            let lng;
+            const phone         = get("Contact") || "";
+            const email         = get("Email") || "";
+            let therapyService  = get("Therapy Service");
+            if (!therapyService || !THERAPY_SERVICES.includes(therapyService)) therapyService = "Early Childhood";
+            let lat, lng;
             const geo = await geocodeAddress(address || "Newcastle NSW");
-            if (geo) {
-              lat = geo.lat;
-              lng = geo.lng;
-            } else {
-              lat = -32.85 + (Math.random() - 0.5) * 0.12;
-              lng = 151.78 + (Math.random() - 0.5) * 0.15;
-            }
-            state.clients.push({
-              id: uid(),
-              name: name || "Unknown",
-              sessionTypes: sessionTypes.length ? sessionTypes : ["home"],
-              address: address || "—",
-              lga,
-              frequency,
-              therapyService,
-              leadTherapist,
-              otherTherapists,
-              phone,
-              email,
-              lat,
-              lng,
-              comments: [],
-              archived: false
-            });
+            if (geo) { lat = geo.lat; lng = geo.lng; }
+            else { lat = -32.85 + (Math.random()-0.5)*0.12; lng = 151.78 + (Math.random()-0.5)*0.15; }
+            state.clients.push({ id: uid(), name: name||"Unknown", sessionTypes: sessionTypes.length?sessionTypes:["home"], address: address||"—", lga, frequency, therapyService, leadTherapist, otherTherapists, phone, email, lat, lng, comments: [], archived: false });
             added++;
           }
-          if (!added) {
-            alert("No data rows could be imported.");
-            return;
-          }
-          saveState();
-          renderAll();
+          if (!added) { alert("No data rows could be imported."); return; }
+          saveState(); renderAll();
           alert(`Imported ${added} client row(s).`);
-        } catch (e) {
-          alert("Could not read that file. Check the format matches a CSV export.");
-        }
+        } catch { alert("Could not read that file. Check the format matches a CSV export."); }
       };
       reader.readAsText(file);
     }
 
     function csvEscape(v) {
       const s = String(v ?? "");
-      if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
-      return s;
+      return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s;
     }
 
     function resetAllFilters() {
-      document.getElementById("header-therapist").value = "__all__";
-      document.querySelectorAll(".map-lga, .map-th, .map-therapy").forEach((cb) => (cb.checked = false));
-      document.getElementById("filter-table-lga").value = "";
-      document.getElementById("filter-table-lead").value = "";
+      document.querySelectorAll(".map-lga, .map-th, .map-therapy").forEach((cb) => cb.checked = false);
+      document.getElementById("filter-table-lga").value    = "";
+      document.getElementById("filter-table-lead").value   = "";
       document.getElementById("filter-table-therapy").value = "";
       sortState = { key: "name", dir: 1 };
       document.querySelectorAll(".data-table thead th[data-sort]").forEach((h) => {
@@ -2776,16 +2256,10 @@
       renderAll();
     }
 
-    function escapeHtml(s) {
-      const d = document.createElement("div");
-      d.textContent = s;
-      return d.innerHTML;
-    }
+    function escapeHtml(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+    function escapeAttr(s) { return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;"); }
 
-    function escapeAttr(s) {
-      return String(s).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
-    }
-
+    // ——— Auto-login if session is active ———
     if (sessionStorage.getItem("vivid_unlocked") === "1") {
       loginScreen.classList.add("hidden");
       appEl.classList.remove("hidden");
