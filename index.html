@@ -517,7 +517,9 @@
       </div>
     </div>
     <div class="footer-links">
-      <a href="#" id="link-archive">View archive</a>
+<a href="#" id="link-archive">View archive</a>
+      <a href="#" id="link-reset-filters">Reset all filters</a>
+      <a href="#" id="link-clear-all" style="color:#f87171;">Clear all data</a>
       <a href="#" id="link-reset-filters">Reset all filters</a>
       <a href="mailto:techsupport@vividel.com.au?subject=VIVID Caseload — Bug / Feature Request" class="btn-bug-report">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
@@ -1066,6 +1068,10 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("archive-x").addEventListener("click",closeArchive);
     document.getElementById("archive-overlay").addEventListener("click",e=>{if(e.target.id==="archive-overlay")closeArchive();});
     document.getElementById("link-reset-filters").addEventListener("click",e=>{e.preventDefault();resetAllFilters();});
+    document.getElementById("link-clear-all").addEventListener("click",e=>{
+      e.preventDefault();
+      clearAllData();
+    });
 document.getElementById("btn-map-reset").addEventListener("click",()=>{
       document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);
       renderMapMarkers();
@@ -1835,6 +1841,31 @@ sortState={key:"name",dir:1};
     renderAll();
   }
 
+async function clearAllData(){
+    const first = confirm("This will permanently delete ALL clients from the database.\n\nAre you sure?");
+    if(!first) return;
+    const second = confirm("Second confirmation: this cannot be undone.\n\nDelete everything?");
+    if(!second) return;
+
+    try {
+      // Clear Firebase
+      if(FIREBASE_ENABLED && _syncRef){
+        await _syncRef.remove();
+        console.log("✓ Firebase cleared");
+      }
+      // Clear localStorage
+      localStorage.removeItem(STORAGE_KEY);
+      // Reset in-memory state to defaults (empty clients, keep staff)
+      state.clients = [];
+      renderAll();
+      setSyncStatus("synced");
+      alert("All client data has been deleted.\n\nYou can now re-import your updated spreadsheet.");
+    } catch(e) {
+      console.error("Clear failed:", e);
+      alert("Something went wrong: " + e.message);
+    }
+  }
+  
   function escapeHtml(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
   function escapeAttr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
 
