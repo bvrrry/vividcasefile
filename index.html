@@ -519,8 +519,6 @@
     <div class="footer-links">
 <a href="#" id="link-archive">View archive</a>
       <a href="#" id="link-reset-filters">Reset all filters</a>
-      <a href="#" id="link-clear-all" style="color:#f87171;">Clear all data</a>
-      <a href="#" id="link-reset-filters">Reset all filters</a>
       <a href="mailto:techsupport@vividel.com.au?subject=VIVID Caseload — Bug / Feature Request" class="btn-bug-report">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         Report a bug / request a feature
@@ -1068,15 +1066,8 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("archive-x").addEventListener("click",closeArchive);
     document.getElementById("archive-overlay").addEventListener("click",e=>{if(e.target.id==="archive-overlay")closeArchive();});
     document.getElementById("link-reset-filters").addEventListener("click",e=>{e.preventDefault();resetAllFilters();});
-    document.getElementById("link-clear-all").addEventListener("click",e=>{
-      e.preventDefault();
-      clearAllData();
-    });
-document.getElementById("btn-map-reset").addEventListener("click",()=>{
-      document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);
-      renderMapMarkers();
-    });
-
+    document.getElementById("btn-map-reset").addEventListener("click",()=>{
+    document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);renderMapMarkers();});
     document.querySelectorAll(".data-table thead th[data-sort]").forEach(th=>{
       th.addEventListener("click",()=>{
         const key=th.getAttribute("data-sort");
