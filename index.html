@@ -82,6 +82,7 @@
     label { display:block; font-weight:500; font-size:.875rem; margin-bottom:8px; color:var(--text); }
     input[type="password"],input[type="text"],input[type="email"],input[type="tel"],select,textarea { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:.9375rem; background:var(--surface); color:var(--text); transition:border-color .15s,box-shadow .15s; }
     input:focus,select:focus,textarea:focus { outline:none; border-color:var(--primary); box-shadow:0 0 0 3px var(--primary-soft); }
+    input:disabled, select:disabled { opacity:.6; cursor:not-allowed; }
     .field-error { color:var(--danger); font-size:.8125rem; margin-top:6px; }
 
     .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:11px 18px; font-family:inherit; font-size:.875rem; font-weight:600; border-radius:var(--radius-sm); border:none; cursor:pointer; transition:background .15s,transform .1s; }
@@ -135,6 +136,10 @@
     #map { width:100%; height:100%; border-radius:var(--radius); border:1px solid var(--border); box-shadow:var(--shadow); z-index:1; }
     .checkbox-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:.875rem; }
     .checkbox-row input { width:auto; accent-color:var(--primary); }
+    .pending-toggle-row { display:flex; align-items:center; gap:8px; margin-top:10px; padding:8px 10px; border:1px dashed var(--border); border-radius:var(--radius-sm); font-size:.8125rem; background:rgba(0,0,0,.02); }
+    html[data-theme="dark"] .pending-toggle-row { background:rgba(255,255,255,.03); }
+    .pending-toggle-row input { width:auto; accent-color:var(--primary); }
+    .pending-toggle-row .pending-dot { width:10px; height:10px; border-radius:50%; background:#9ca3af; display:inline-block; flex-shrink:0; border:1.5px solid #fff; box-shadow:0 0 0 1px rgba(0,0,0,.15); }
     .marker-cluster-small { background-color:rgba(74,92,40,.3); } .marker-cluster-small div { background-color:rgba(74,92,40,.75); color:#fff; font-weight:700; }
     .marker-cluster-medium { background-color:rgba(74,92,40,.4); } .marker-cluster-medium div { background-color:rgba(74,92,40,.85); color:#fff; font-weight:700; }
     .marker-cluster-large { background-color:rgba(74,92,40,.5); } .marker-cluster-large div { background-color:rgba(74,92,40,.9); color:#fff; font-weight:700; }
@@ -147,7 +152,11 @@
     /* ——— Table ——— */
     .table-card { background:var(--surface); backdrop-filter:blur(8px); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; box-shadow:var(--shadow); }
     .table-card-head { padding:16px 20px; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; }
+    .table-card-head-left { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
     .table-card-head h2 { margin:0; font-size:1.125rem; font-weight:600; }
+    .pending-count-btn { display:inline-flex; align-items:center; gap:7px; padding:6px 12px; border-radius:999px; background:rgba(156,163,175,.15); border:1px solid rgba(156,163,175,.35); color:var(--text-muted); font-size:.8125rem; font-weight:600; cursor:pointer; font-family:inherit; transition:background .15s,color .15s; }
+    .pending-count-btn:hover { background:rgba(156,163,175,.25); color:var(--text); }
+    .pending-count-btn .pending-dot { width:9px; height:9px; border-radius:50%; background:#9ca3af; display:inline-block; flex-shrink:0; }
     .sort-hint { font-size:.8125rem; color:var(--text-muted); }
     .table-toolbar { padding:10px 20px; border-bottom:1px solid var(--border); display:flex; flex-wrap:wrap; gap:8px 16px; align-items:flex-end; background:rgba(212,220,200,.55); }
     html[data-theme="dark"] .table-toolbar { background:rgba(36,48,24,.45); }
@@ -173,17 +182,13 @@
     .col-freq  { width:90px; }
     .col-phone { width:115px; white-space:nowrap; }
     .col-dist  { width:70px; white-space:nowrap; }
-    .col-act   { width:110px; text-align:center !important; }
+    .col-act   { width:90px; text-align:center !important; }
     .data-table tbody tr.client-row { cursor:pointer; transition:transform .15s ease,box-shadow .15s ease,background .15s ease; }
     @media (hover:hover) and (pointer:fine) { .data-table tbody tr.client-row:hover { transform:scale(1.005); box-shadow:0 4px 20px rgba(45,58,30,.12); background:var(--primary-soft); position:relative; z-index:2; } }
     .data-table .row-actions { display:flex; align-items:center; gap:4px; justify-content:center; white-space:nowrap; }
     .icon-btn { width:34px; height:34px; display:inline-flex; align-items:center; justify-content:center; border:none; background:transparent; border-radius:var(--radius-sm); cursor:pointer; color:var(--text-muted); transition:background .15s,color .15s; position:relative; }
     .icon-btn:hover { background:var(--bg); color:var(--text); }
     .icon-btn.danger:hover { color:var(--danger); background:rgba(220,38,38,.08); }
-    .icon-btn.has-comments svg { stroke:#1e6b2e; }
-    html[data-theme="dark"] .icon-btn.has-comments svg { stroke:#5dbe72; }
-    .comment-badge { position:absolute; top:-3px; right:-3px; background:#1e6b2e; color:#fff; border-radius:999px; font-size:.6rem; font-weight:700; min-width:14px; height:14px; display:flex; align-items:center; justify-content:center; padding:0 3px; line-height:1; border:1.5px solid var(--surface); }
-    html[data-theme="dark"] .comment-badge { background:#5dbe72; color:#0b1008; }
 
     /* ——— Modals ——— */
     .overlay { position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1000; display:flex; align-items:center; justify-content:center; padding:24px; animation:fadeIn .2s ease; }
@@ -203,27 +208,22 @@
     .session-types { display:flex; flex-wrap:wrap; gap:8px 16px; }
     .session-types label { display:flex; align-items:center; gap:8px; font-weight:400; margin:0; cursor:pointer; }
     .session-types input { width:auto; accent-color:var(--primary); }
+    .pending-box { display:flex; align-items:flex-start; gap:10px; padding:12px 14px; border:1px solid var(--border); border-radius:var(--radius-sm); background:rgba(156,163,175,.08); }
+    .pending-box input[type="checkbox"] { width:18px; height:18px; accent-color:var(--primary); margin-top:2px; flex-shrink:0; }
+    .pending-box-text { font-size:.875rem; line-height:1.4; }
+    .pending-box-text strong { display:block; font-weight:600; margin-bottom:2px; }
+    .pending-box-text .muted { color:var(--text-muted); font-size:.8125rem; }
     .modal-footer { padding:16px 22px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; flex-wrap:wrap; gap:10px; align-items:center; }
     .modal-footer .btn { min-width:9rem; min-height:44px; padding:12px 22px; font-size:.9375rem; font-weight:600; }
     .modal-footer .btn-primary { margin-top:0 !important; }
     .staff-list { display:flex; flex-direction:column; gap:10px; }
     .staff-item { display:flex; gap:10px; align-items:center; }
     .staff-item input { flex:1; }
-    .comment-item { padding:12px 0; border-bottom:1px solid var(--border); font-size:.875rem; }
-    .comment-item:last-child { border-bottom:none; }
-    .comment-meta { font-size:.75rem; color:var(--text-muted); margin-bottom:4px; display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
-    .badge-imported { font-size:.65rem; padding:1px 6px; background:rgba(99,102,241,.12); color:#6366f1; border-radius:4px; font-weight:700; }
     .detail-grid { display:grid; grid-template-columns:130px 1fr; gap:8px 16px; font-size:.875rem; }
     .detail-grid dt { color:var(--text-muted); font-weight:500; }
     .detail-grid dd { margin:0; }
+    .pending-badge-inline { display:inline-block; padding:2px 8px; border-radius:999px; background:rgba(156,163,175,.2); color:var(--text-muted); font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin-left:8px; vertical-align:middle; }
     .empty-state { padding:48px 24px; text-align:center; color:var(--text-muted); }
-
-    /* Therapists engaged — compact grid */
-    .therapists-engaged-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:4px; border:1px solid var(--border); border-radius:var(--radius-sm); padding:8px; background:rgba(209,250,229,.2); }
-    html[data-theme="dark"] .therapists-engaged-grid { background:rgba(0,0,0,.1); }
-    .therapist-engage-item label { display:flex; align-items:center; gap:8px; padding:7px 10px; cursor:pointer; font-weight:400; margin:0; border-radius:8px; transition:background .12s; font-size:.875rem; }
-    .therapist-engage-item label:hover { background:var(--primary-soft); }
-    .therapist-engage-item input[type="checkbox"] { width:auto; accent-color:var(--primary); margin:0; flex-shrink:0; }
 
     /* Address autocomplete */
     .addr-autocomplete-wrap { position:relative; }
@@ -233,8 +233,12 @@
     .addr-suggestion-item:hover { background:var(--primary-soft); }
 
     /* ——— Analytics modal — compact grid ——— */
-    .analytics-summary-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:12px 16px; background:var(--primary-soft); border-radius:var(--radius-sm); margin-bottom:14px; font-size:.875rem; }
-    .analytics-summary-bar strong { font-size:1.25rem; font-weight:700; color:var(--primary); }
+    .analytics-summary-bar { display:flex; align-items:stretch; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:12px 16px; background:var(--primary-soft); border-radius:var(--radius-sm); margin-bottom:14px; font-size:.875rem; }
+    .analytics-stat { flex:1 1 0; min-width:0; }
+    .analytics-stat + .analytics-stat { padding-left:14px; border-left:1px solid var(--border); }
+    .analytics-stat:last-child { text-align:right; }
+    .analytics-stat-label { font-size:.7rem; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:.04em; margin-bottom:2px; }
+    .analytics-summary-bar strong { font-size:1.25rem; font-weight:700; color:var(--primary); display:block; line-height:1.2; }
     .analytics-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:10px; }
     .analytics-card { border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
     .analytics-card-head { display:flex; align-items:center; gap:8px; padding:9px 12px; background:var(--table-head); border-bottom:1px solid var(--border); }
@@ -245,12 +249,22 @@
     .kpi-label { font-size:.6875rem; color:var(--text-muted); }
     .analytics-card-body { padding:8px 12px; }
     .analytics-freq-row { display:flex; align-items:center; gap:6px; padding:3px 0; font-size:.775rem; }
-    .analytics-freq-row .freq-name { color:var(--text-muted); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .analytics-freq-row .freq-name { color:var(--text-muted); flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:flex; align-items:center; gap:5px; }
     .analytics-freq-row .freq-count { font-weight:700; flex-shrink:0; }
+    .analytics-freq-row.is-reactive .freq-name { color:#b45309; }
+    html[data-theme="dark"] .analytics-freq-row.is-reactive .freq-name { color:#fbbf24; }
+    .analytics-freq-row.is-reactive .freq-name strong { font-weight:700; }
+    .analytics-freq-row .reactive-dot { width:6px; height:6px; border-radius:50%; background:#f59e0b; display:inline-block; flex-shrink:0; box-shadow:0 0 0 2px rgba(245,158,11,.2); }
     .analytics-bar-wrap { width:36px; height:4px; background:var(--border); border-radius:2px; overflow:hidden; flex-shrink:0; }
     .analytics-bar-fill { height:100%; border-radius:2px; }
     .analytics-week-equiv { display:flex; align-items:center; justify-content:space-between; padding:7px 12px; background:var(--bg); border-top:1px solid var(--border); font-size:.775rem; }
     .analytics-week-equiv strong { font-weight:700; }
+
+    @media (max-width:600px) {
+      .analytics-summary-bar { gap:8px; }
+      .analytics-stat + .analytics-stat { padding-left:10px; }
+      .analytics-summary-bar strong { font-size:1.1rem; }
+    }
 
     /* ——— Footer ——— */
     .footer { background:var(--footer-bg); color:var(--footer-text); padding:20px 24px; margin-top:auto; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16px; }
@@ -266,8 +280,12 @@
     .theme-toggle { width:44px; height:44px; border-radius:12px; border:1px solid rgba(236,253,245,.25); background:rgba(255,255,255,.08); color:var(--footer-text); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; transition:background .15s,transform .12s; }
     .theme-toggle:hover { background:rgba(255,255,255,.15); transform:scale(1.05); }
 
-/* ——— Pagination ——— */
-    .pagination-bar { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; padding:11px 20px; border-top:1px solid var(--border); background:var(--table-head); font-size:.875rem; }
+    /* ——— Pagination ——— */
+    /* ——— Pagination ——— */
+    .pagination-bar { display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:10px; padding:11px 20px; border-top:1px solid var(--border); background:var(--table-head); font-size:.875rem; }
+    .pagination-bar .page-size-wrap { justify-self:start; }
+    .pagination-bar .pagination-controls { justify-self:center; }
+    .pagination-bar .page-info { justify-self:end; text-align:right; }
     .page-size-wrap { display:flex; align-items:center; gap:6px; color:var(--text-muted); }
     .page-size-wrap select { width:auto; padding:5px 8px; font-size:.8125rem; }
     .page-info { color:var(--text-muted); font-size:.8125rem; }
@@ -276,8 +294,12 @@
     .pagination-controls button:hover:not(:disabled) { background:var(--primary-soft); color:var(--primary); }
     .pagination-controls button:disabled { opacity:.35; cursor:default; }
     .pagination-controls .page-num { padding:0 8px; font-size:.8125rem; color:var(--text-muted); white-space:nowrap; }
+    @media (max-width:700px) {
+      .pagination-bar { grid-template-columns:1fr; gap:8px; padding:10px 14px; }
+      .pagination-bar > * { justify-self:center !important; text-align:center !important; }
+    }
 
-/* ——— Grouped rows ——— */
+    /* ——— Grouped rows ——— */
     .group-header-row > td { background:rgba(74,92,40,0.05); font-weight:500; }
     html[data-theme="dark"] .group-header-row > td { background:rgba(143,188,90,0.07); }
     .client-subrow > td { background:rgba(0,0,0,0.018); font-size:.8125rem; }
@@ -291,17 +313,88 @@
 
     .hidden-input { position:absolute; width:0; height:0; opacity:0; pointer-events:none; }
 
-/* Back to top */
+    /* Back to top */
     #btn-back-to-top { position:fixed; bottom:28px; right:24px; z-index:5000; width:44px; height:44px; border-radius:50%; background:var(--primary); color:#fff; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 16px rgba(0,0,0,.25); opacity:0; transform:translateY(10px); transition:opacity .2s,transform .2s,background .15s; pointer-events:none; }
     #btn-back-to-top.visible { opacity:1; transform:translateY(0); pointer-events:auto; }
     #btn-back-to-top:hover { background:var(--primary-hover); }
 
+    /* ——— Map accordion ——— */
+    .map-accordion { background:var(--surface); backdrop-filter:blur(8px); border-radius:var(--radius); border:1px solid var(--border); overflow:hidden; box-shadow:var(--shadow); margin-bottom:28px; }
+    .map-accordion-summary { list-style:none; cursor:pointer; padding:14px 20px; font-size:.9375rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:12px; user-select:none; transition:background .15s; }
+    .map-accordion-summary::-webkit-details-marker { display:none; }
+    .map-accordion-summary:hover { background:var(--primary-soft); }
+    .map-accordion-summary svg:first-of-type { color:var(--primary); }
+    .map-accordion-summary .map-accordion-chevron { margin-left:auto; color:var(--text-muted); transition:transform .2s; display:inline-flex; }
+    .map-accordion[open] .map-accordion-summary .map-accordion-chevron { transform:rotate(180deg); }
+    .map-accordion[open] .map-accordion-summary { border-bottom:1px solid var(--border); }
+    .map-accordion .map-section { margin-bottom:0; padding:20px; }
+
+    /* ——— Settings cog / menu ——— */
+    .settings-dropdown-wrap { position:relative; z-index:4002; }
+    .btn-settings-cog { display:inline-flex; align-items:center; gap:6px; }
+    .btn-settings-cog svg { transition:transform .3s ease; }
+    .btn-settings-cog[aria-expanded="true"] svg { transform:rotate(60deg); }
+    .settings-menu { position:absolute; right:0; top:calc(100% + 6px); min-width:240px; background:var(--surface); backdrop-filter:blur(12px); border:1px solid var(--border); border-radius:var(--radius-sm); box-shadow:var(--shadow); padding:6px; z-index:4010; }
+    .settings-menu-head { padding:10px 12px 8px; font-size:.75rem; color:var(--text-muted); border-bottom:1px solid var(--border); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+    .settings-menu-head strong { color:var(--text); font-size:.8125rem; font-weight:600; }
+    .settings-menu-head .admin-pill { font-size:.625rem; padding:2px 6px; border-radius:4px; background:var(--primary); color:#fff; font-weight:700; text-transform:uppercase; letter-spacing:.04em; margin-left:4px; }
+    .settings-menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; padding:10px 12px; border:none; background:transparent; font-family:inherit; font-size:.875rem; font-weight:500; color:var(--text); border-radius:8px; cursor:pointer; }
+    .settings-menu button:hover { background:var(--primary-soft); }
+    .settings-menu-divider { height:1px; background:var(--border); margin:4px 0; }
+    .settings-menu-danger { color:var(--danger) !important; }
+    .settings-menu-danger:hover { background:rgba(220,38,38,.08) !important; }
+
+    /* Admin-only visibility helper — elements with .admin-only are hidden unless body has .is-admin */
+    .admin-only { display:none !important; }
+    body.is-admin .admin-only { display:inline-flex !important; }
+    body.is-admin .admin-only.admin-only-block { display:block !important; }
+    /* Tech-login-only: more restrictive than admin-only. Only the tech back-door sees these. */
+    .tech-only { display:none !important; }
+    body.is-tech .tech-only { display:inline-flex !important; }
+    body.is-tech .tech-only.tech-only-block { display:block !important; }
+
+    /* ——— Staff editor rows — admin tools ——— */
+    .staff-item { display:grid; grid-template-columns:1fr auto auto auto; gap:8px; align-items:center; }
+    .staff-item input { min-width:0; }
+    .staff-item-admin-label { display:inline-flex; align-items:center; gap:6px; font-size:.8125rem; font-weight:500; color:var(--text-muted); cursor:pointer; user-select:none; margin:0; padding:0 6px; }
+    .staff-item-admin-label input[type="checkbox"] { width:16px; height:16px; accent-color:var(--primary); margin:0; }
+    .staff-item-btn { width:34px; height:34px; border:1px solid var(--border); background:var(--surface); border-radius:var(--radius-sm); cursor:pointer; display:inline-flex; align-items:center; justify-content:center; color:var(--text-muted); transition:background .15s,color .15s,border-color .15s; flex-shrink:0; }
+    .staff-item-btn:hover { background:var(--bg); color:var(--text); }
+    .staff-item-btn.danger:hover { background:rgba(220,38,38,.08); color:var(--danger); border-color:rgba(220,38,38,.25); }
+    .staff-item-btn.key:hover { background:rgba(74,92,40,.08); color:var(--primary); border-color:rgba(74,92,40,.25); }
+    .staff-item-badge { display:inline-block; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 6px; border-radius:4px; background:rgba(245,158,11,.12); color:#b45309; margin-left:6px; vertical-align:middle; }
+    html[data-theme="dark"] .staff-item-badge { background:rgba(245,158,11,.2); color:#fbbf24; }
+    .staff-item-you-badge { display:inline-block; font-size:.6rem; font-weight:700; text-transform:uppercase; letter-spacing:.04em; padding:2px 6px; border-radius:4px; background:var(--primary-soft); color:var(--primary); margin-left:6px; vertical-align:middle; }
+
+    @media (max-width:600px) {
+      .staff-item { grid-template-columns:1fr; gap:6px; padding-bottom:10px; border-bottom:1px solid var(--border); }
+      .staff-item:last-child { border-bottom:none; }
+      .staff-item-admin-label { justify-content:flex-start; padding:4px 0; }
+      .staff-item-btn { width:auto; padding:8px 12px; justify-content:flex-start; gap:8px; }
+      .staff-item-btn::after { content:attr(data-label); font-size:.8125rem; font-weight:500; }
+    }
+
+    /* Login staff-select icon */
+    #login-screen select { background-position:right 12px center; background-repeat:no-repeat; }
+    #login-submit:disabled { opacity:.5; cursor:not-allowed; }
+    #login-submit:disabled:hover { background:var(--primary); }
+
+    /* Tech login link + form */
+    .tech-login-divider { margin-top:20px; padding-top:14px; border-top:1px solid var(--border); text-align:center; }
+    .tech-login-divider a { color:var(--text-muted); font-size:.75rem; text-decoration:none; padding:6px 12px; border-radius:6px; transition:background .15s,color .15s; }
+    .tech-login-divider a:hover { background:var(--primary-soft); color:var(--primary); }
+    .tech-login-form { margin-top:16px; padding-top:16px; border-top:1px dashed var(--border); }
+    .tech-login-form label { font-size:.8125rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.04em; font-weight:700; }
 
     /* ——— Mobile ——— */
     @media (max-width:900px) {
       .map-section { grid-template-columns:1fr; gap:16px; }
       .map-controls { padding:12px; }
       .map-wrap { width:100%; height:auto; aspect-ratio:4/3; min-height:220px; }
+      .map-accordion-summary { padding:12px 14px; font-size:.875rem; }
+      .map-accordion .map-section { padding:14px; }
+      .settings-menu { position:fixed; left:12px; right:12px; top:auto; bottom:12px; min-width:0; }
+      .settings-cog-label { display:none; }
       .header { padding:10px 14px; flex-direction:row; flex-wrap:wrap; align-items:center; gap:0; }
       .header-left { flex:1; min-width:0; }
       #btn-mobile-menu-toggle { display:inline-flex; flex-shrink:0; }
@@ -309,7 +402,6 @@
       .header-actions { margin-left:0; width:100%; display:none; margin-top:10px; }
       .header-actions.open { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
       .header-actions .btn-secondary { min-height:44px; padding:12px 14px; font-size:.8125rem; }
-      /* Export button — full width and text centred */
       .export-dropdown-wrap { grid-column:1/-1; }
       .export-split { display:flex; width:100%; }
       .export-split .btn-export:first-child { flex:1; min-width:0; justify-content:center; }
@@ -360,11 +452,36 @@
       <img src="https://vividearlylearning.com.au/wp-content/uploads/2025/07/Vivid-Early-Learning_RGB_Primary-logo_fullcolor-300x142.png" alt="Vivid Early Learning" />
       <h1 class="login-title">VIVID Caseload</h1>
     </div>
-    <p class="login-sub">Enter your access password to continue.</p>
-    <label for="login-password">Password</label>
+    <p class="login-sub">Select your name and enter your password.</p>
+
+    <label for="login-staff-select">Your name</label>
+    <select id="login-staff-select" disabled>
+      <option value="">Loading staff list…</option>
+    </select>
+
+    <label for="login-password" style="margin-top:16px;">Password</label>
     <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" />
+
     <div id="login-error" class="field-error hidden">Incorrect password. Please try again.</div>
-    <button type="button" class="btn btn-primary" id="login-submit">Confirm</button>
+    <div id="login-status" style="margin-top:10px;font-size:.8125rem;color:var(--text-muted);text-align:center;"></div>
+    <button type="button" class="btn btn-primary" id="login-submit" disabled>Confirm</button>
+    <p style="margin:18px 0 0;font-size:.75rem;color:var(--text-muted);text-align:center;line-height:1.5;">
+      First-time login? Use the default password. You'll be prompted to set a new one immediately.
+    </p>
+    <div class="tech-login-divider">
+      <a href="#" id="tech-login-link">Tech login</a>
+    </div>
+
+    <!-- Tech login sub-form (hidden by default) -->
+    <div id="tech-login-form" class="tech-login-form hidden">
+      <label for="tech-login-password" style="margin-top:0;">Tech password</label>
+      <input type="password" id="tech-login-password" placeholder="Enter tech password" autocomplete="off" />
+      <div id="tech-login-error" class="field-error hidden">Incorrect tech password.</div>
+      <div style="display:flex;gap:8px;margin-top:10px;">
+        <button type="button" class="btn btn-secondary" id="tech-login-cancel" style="flex:1;margin-top:0;">Cancel</button>
+        <button type="button" class="btn btn-primary" id="tech-login-submit" style="flex:1;margin-top:0;">Log in</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -384,7 +501,7 @@
         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="12" width="4" height="10"/><rect x="9" y="7" width="4" height="15"/><rect x="16" y="2" width="4" height="20"/></svg>
         Analytics
       </button>
-      <button type="button" class="btn btn-secondary" id="btn-edit-staff">Edit Staff</button>
+      <button type="button" class="btn btn-secondary admin-only" id="btn-edit-staff">Edit Staff</button>
       <button type="button" class="btn btn-secondary" id="btn-add-client">Add Client</button>
       <div class="export-dropdown-wrap">
         <div class="export-split">
@@ -392,9 +509,25 @@
           <button type="button" class="btn btn-export btn-export-caret" id="btn-export-menu-toggle" aria-expanded="false" aria-label="Data menu">▾</button>
         </div>
         <div id="export-menu" class="export-menu hidden">
-<button type="button" id="menu-import">Import spreadsheet…</button>
+          <button type="button" id="menu-import" class="tech-only tech-only-block">Import spreadsheet…</button>
           <button type="button" id="menu-export">Download export (CSV)</button>
-          <button type="button" id="menu-sync-addresses">↻ Sync client addresses</button>
+          <button type="button" id="menu-sync-addresses" class="tech-only tech-only-block">↻ Sync client addresses</button>
+        </div>
+      </div>
+      <div class="settings-dropdown-wrap">
+        <button type="button" class="btn btn-secondary btn-settings-cog" id="btn-settings-cog" aria-label="Settings" aria-expanded="false" title="Settings">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          <span class="settings-cog-label">Settings</span>
+        </button>
+        <div id="settings-menu" class="settings-menu hidden">
+          <div class="settings-menu-head" id="settings-menu-user"></div>
+          <button type="button" id="menu-change-password">🔑 Change my password</button>
+          <button type="button" id="menu-reset-filters">↺ Reset all filters</button>
+          <button type="button" id="menu-toggle-theme">
+            <span id="theme-menu-label">🌙 Switch to dark mode</span>
+          </button>
+          <div class="settings-menu-divider"></div>
+          <button type="button" id="menu-logout" class="settings-menu-danger">Log out</button>
         </div>
       </div>
       <input type="file" id="import-file" class="hidden-input" accept=".csv,text/csv" />
@@ -402,34 +535,48 @@
   </header>
 
   <main class="main">
-    <section class="map-section">
-      <aside class="map-controls">
-        <details class="map-details">
-          <summary>Filter — LGA</summary>
-          <div class="map-details-body">
-            <p style="margin:0 0 8px;font-size:.75rem;color:var(--text-muted);">Filters map pins only.</p>
-            <div id="map-lga-checkboxes"></div>
+    <details class="map-accordion" id="map-accordion">
+      <summary class="map-accordion-summary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;"><path d="M1 6l7-3 8 3 7-3v15l-7 3-8-3-7 3V6z"/><path d="M8 3v15"/><path d="M16 6v15"/></svg>
+        <span>Map of Clients</span>
+        <span class="map-accordion-chevron" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </summary>
+      <section class="map-section">
+        <aside class="map-controls">
+          <details class="map-details">
+            <summary>Filter — LGA</summary>
+            <div class="map-details-body">
+              <p style="margin:0 0 8px;font-size:.75rem;color:var(--text-muted);">Filters map pins only.</p>
+              <div id="map-lga-checkboxes"></div>
+            </div>
+          </details>
+          <details class="map-details">
+            <summary>Filter — Therapist</summary>
+            <div class="map-details-body"><div id="map-therapist-checkboxes"></div></div>
+          </details>
+          <details class="map-details">
+            <summary>Filter — Therapy service</summary>
+            <div class="map-details-body"><div id="map-therapy-checkboxes"></div></div>
+          </details>
+          <label class="pending-toggle-row" title="Pending clients have no therapist assigned yet.">
+            <input type="checkbox" id="map-show-pending" />
+            <span class="pending-dot"></span>
+            <span>Show pending clients</span>
+          </label>
+          <button type="button" id="btn-map-reset" style="margin-top:10px;width:100%;padding:9px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-muted);font-family:inherit;font-size:.8125rem;font-weight:600;cursor:pointer;text-align:center;letter-spacing:.01em;transition:background .15s,color .15s;">↺ Reset map filters</button>
+        </aside>
+        <div class="map-column">
+          <div class="map-wrap">
+            <button type="button" class="map-expand-fab" id="btn-map-expand" title="Expand map" aria-label="Expand map">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </button>
+            <div id="map"></div>
           </div>
-        </details>
-        <details class="map-details">
-          <summary>Filter — Therapist</summary>
-          <div class="map-details-body"><div id="map-therapist-checkboxes"></div></div>
-        </details>
-    <details class="map-details">
-          <summary>Filter — Therapy service</summary>
-          <div class="map-details-body"><div id="map-therapy-checkboxes"></div></div>
-        </details>
-        <button type="button" id="btn-map-reset" style="margin-top:10px;width:100%;padding:9px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface);color:var(--text-muted);font-family:inherit;font-size:.8125rem;font-weight:600;cursor:pointer;text-align:center;letter-spacing:.01em;transition:background .15s,color .15s;">↺ Reset map filters</button>
-      </aside>
-      <div class="map-column">
-        <div class="map-wrap">
-          <button type="button" class="map-expand-fab" id="btn-map-expand" title="Expand map" aria-label="Expand map">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-          </button>
-          <div id="map"></div>
         </div>
-      </div>
-    </section>
+      </section>
+    </details>
 
     <div id="map-popout-overlay" class="map-popout-overlay hidden">
       <div class="map-popout-inner">
@@ -445,7 +592,13 @@
 
     <section class="table-card">
       <div class="table-card-head">
-        <h2 id="caseload-heading">Caseload</h2>
+        <div class="table-card-head-left">
+          <h2 id="caseload-heading">Caseload</h2>
+          <button type="button" id="btn-view-pending" class="pending-count-btn hidden">
+            <span class="pending-dot"></span>
+            <span id="pending-btn-label">View pending</span>
+          </button>
+        </div>
         <span class="sort-hint">Click column headers to sort</span>
       </div>
       <div class="table-toolbar">
@@ -484,7 +637,7 @@
           </thead>
           <tbody id="clients-tbody"></tbody>
         </table>
-<div id="clients-empty" class="empty-state hidden">No clients match the current filters.</div>
+        <div id="clients-empty" class="empty-state hidden">No clients match the current filters.</div>
       </div>
       <div class="pagination-bar" id="pagination-bar">
         <div class="page-size-wrap">
@@ -496,7 +649,6 @@
             <option value="9999">All</option>
           </select>
         </div>
-        <span class="page-info" id="pagination-info"></span>
         <div class="pagination-controls">
           <button id="btn-page-first" title="First page">«</button>
           <button id="btn-page-prev" title="Previous">‹</button>
@@ -504,6 +656,7 @@
           <button id="btn-page-next" title="Next">›</button>
           <button id="btn-page-last" title="Last page">»</button>
         </div>
+        <span class="page-info" id="pagination-info"></span>
       </div>
     </section>
   </main>
@@ -517,20 +670,11 @@
       </div>
     </div>
     <div class="footer-links">
-<a href="#" id="link-archive">View archive</a>
-      <a href="#" id="link-reset-filters">Reset all filters</a>
+      <a href="#" id="link-archive">View archive</a>
       <a href="mailto:techsupport@vividel.com.au?subject=VIVID Caseload — Bug / Feature Request" class="btn-bug-report">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
         Report a bug / request a feature
       </a>
-      <button type="button" class="theme-toggle" id="theme-toggle" title="Toggle theme" aria-label="Toggle theme">
-        <span id="theme-icon-sun" class="hidden">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
-        </span>
-        <span id="theme-icon-moon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-        </span>
-      </button>
     </div>
   </footer>
 </div>
@@ -550,6 +694,15 @@
           <label for="fc-name">Name <span style="color:var(--danger)">*</span></label>
           <input type="text" id="fc-name" required placeholder="Full name" />
         </div>
+
+        <label class="pending-box">
+          <input type="checkbox" id="fc-pending" />
+          <span class="pending-box-text">
+            <strong>Mark as pending</strong>
+            <span class="muted">No therapist assigned yet. Frequency will be set to Pending and this client won't appear on the map or main table by default.</span>
+          </span>
+        </label>
+
         <div>
           <label>Type of session <span style="color:var(--danger)">*</span></label>
           <div class="session-types" id="fc-session-types">
@@ -582,8 +735,13 @@
             <label for="fc-frequency">Frequency <span style="color:var(--danger)">*</span></label>
             <select id="fc-frequency" required>
               <option value="">Select frequency</option>
-              <option>Twice weekly</option><option>Weekly</option><option>Fortnightly</option>
-              <option>Monthly</option><option>As needed</option><option>Other</option>
+              <option>Twice weekly</option>
+              <option>Weekly</option>
+              <option>Fortnightly</option>
+              <option>Monthly</option>
+              <option>Reactive</option>
+              <option>Pending</option>
+              <option>Other</option>
             </select>
           </div>
         </div>
@@ -591,12 +749,15 @@
           <label for="fc-therapy">Therapy service <span style="color:var(--danger)">*</span></label>
           <select id="fc-therapy" required>
             <option value="">Select service</option>
-            <option>OT</option><option>Speech</option><option>AHA</option><option>Educator</option>
+            <option>OT</option>
+            <option>Speech</option>
+            <option>Keyworker</option>
+            <option>Educator</option>
           </select>
         </div>
-        <div>
+        <div id="fc-lead-wrap">
           <label for="fc-lead">Therapist <span style="color:var(--danger)">*</span></label>
-          <select id="fc-lead" required></select>
+          <select id="fc-lead"></select>
           <div id="fc-therapist-error" class="field-error hidden">Please select a therapist.</div>
         </div>
         <div class="form-row-2">
@@ -628,7 +789,7 @@
       </button>
     </div>
     <div class="modal-body">
-      <p style="margin:0 0 16px;font-size:.875rem;color:var(--text-muted);">Renaming a team member updates every client where they appear.</p>
+      <p style="margin:0 0 16px;font-size:.875rem;color:var(--text-muted);line-height:1.5;">Rename, promote to admin, reset passwords, or remove staff. Removed staff will still appear on clients they were assigned to — you'll need to edit those clients manually. At least one admin must remain.</p>
       <div class="staff-list" id="staff-editor-list"></div>
       <button type="button" class="btn btn-ghost" id="btn-add-staff-row" style="margin-top:12px;">+ Add team member</button>
     </div>
@@ -639,25 +800,71 @@
   </div>
 </div>
 
-<!-- Comments Modal -->
-<div id="modal-comments-overlay" class="overlay hidden">
+<!-- Change Password Modal (regular — accessed via Settings menu) -->
+<div id="modal-changepw-overlay" class="overlay hidden" style="z-index:5200;">
   <div class="modal">
     <div class="modal-head">
       <div class="modal-head-inner">
-        <span class="modal-ribbon" id="comments-ribbon"></span>
-        <h2 id="comments-client-name">Comments</h2>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <h2 id="changepw-title">Change your password</h2>
       </div>
-      <button type="button" class="modal-close" id="modal-comments-x" aria-label="Close">
+      <button type="button" class="modal-close" id="modal-changepw-x" aria-label="Close">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
       </button>
     </div>
     <div class="modal-body">
-      <div id="comments-list" style="max-height:240px;overflow-y:auto;margin-bottom:16px;"></div>
-      <label for="comment-new">Add a note</label>
-      <textarea id="comment-new" rows="3" placeholder="Type your note…"></textarea>
+      <p id="changepw-lead" style="margin:0 0 16px;font-size:.875rem;color:var(--text-muted);"></p>
+      <div class="form-grid">
+        <div>
+          <label for="changepw-current">Current password</label>
+          <input type="password" id="changepw-current" autocomplete="current-password" placeholder="Enter current password" />
+        </div>
+        <div>
+          <label for="changepw-new">New password <span style="color:var(--danger)">*</span></label>
+          <input type="password" id="changepw-new" autocomplete="new-password" placeholder="Minimum 6 characters" />
+        </div>
+        <div>
+          <label for="changepw-confirm">Confirm new password <span style="color:var(--danger)">*</span></label>
+          <input type="password" id="changepw-confirm" autocomplete="new-password" placeholder="Re-enter new password" />
+        </div>
+        <div id="changepw-error" class="field-error hidden"></div>
+      </div>
     </div>
     <div class="modal-footer">
-      <button type="button" class="btn btn-primary" id="comment-add-btn">Confirm</button>
+      <button type="button" class="btn btn-secondary" id="modal-changepw-cancel">Cancel</button>
+      <button type="button" class="btn btn-primary" id="modal-changepw-save">Save password</button>
+    </div>
+  </div>
+</div>
+
+<!-- Forced-password-change Modal (shown after first login; cannot be closed) -->
+<div id="modal-forcepw-overlay" class="overlay hidden" style="z-index:5300;">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-head-inner">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" style="flex-shrink:0"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <h2>Set your password</h2>
+      </div>
+    </div>
+    <div class="modal-body">
+      <div style="padding:10px 14px;margin-bottom:14px;border-radius:var(--radius-sm);background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.35);font-size:.8125rem;color:var(--text);line-height:1.5;">
+        <strong>Welcome!</strong> Before you can use the caseload, please set your own password to replace the default one.
+      </div>
+      <div class="form-grid">
+        <div>
+          <label for="forcepw-new">New password <span style="color:var(--danger)">*</span></label>
+          <input type="password" id="forcepw-new" autocomplete="new-password" placeholder="Minimum 6 characters" />
+        </div>
+        <div>
+          <label for="forcepw-confirm">Confirm new password <span style="color:var(--danger)">*</span></label>
+          <input type="password" id="forcepw-confirm" autocomplete="new-password" placeholder="Re-enter new password" />
+        </div>
+        <div id="forcepw-error" class="field-error hidden"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-secondary" id="modal-forcepw-logout">Cancel (log out)</button>
+      <button type="button" class="btn btn-primary" id="modal-forcepw-save">Set password</button>
     </div>
   </div>
 </div>
@@ -727,6 +934,37 @@
   </div>
 </div>
 
+<!-- Pending clients overlay -->
+<div id="pending-overlay" class="overlay hidden" style="align-items:flex-start;padding-top:40px;">
+  <div class="modal wide" style="max-height:85vh;">
+    <div class="modal-head">
+      <div class="modal-head-inner">
+        <span class="modal-ribbon" style="background:#9ca3af;"></span>
+        <h2>Pending clients</h2>
+      </div>
+      <button type="button" class="modal-close" id="pending-x" aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" style="padding:0;">
+      <p style="padding:14px 20px 0;margin:0;font-size:.8125rem;color:var(--text-muted);">These clients don't have a therapist assigned yet. They're hidden from the main table and the map unless "Show pending" is ticked.</p>
+      <div class="data-table-wrap" style="padding-top:10px;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th class="col-ribbon" aria-hidden="true"></th>
+              <th>Name</th><th>Session address</th><th>LGA</th><th>Therapy</th>
+              <th style="text-align:right;padding-right:16px;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pending-tbody"></tbody>
+        </table>
+        <div id="pending-empty" class="empty-state hidden">No pending clients.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <button id="btn-back-to-top" aria-label="Back to top" title="Back to top">
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 15l-6-6-6 6"/></svg>
 </button>
@@ -746,63 +984,98 @@
   };
 
   const APP_PASSWORD     = "vividearlylearning";
+  // DEFAULT_PASSWORD is used for any staff member whose hasChangedPassword === false.
+  // It's a one-time login password — users are forced to change on first login.
+  // Admins can reset a staff member's password which flips hasChangedPassword back to false.
+  const DEFAULT_PASSWORD = "vividearlylearning";
+  // TECH_LOGIN_PASSWORD grants access without needing a Firebase staff record.
+  // Synthetic session — no Firebase write, no staff list pollution. Admin privileges.
+  // Note: this password lives in client-side JS. Anyone who views source can find it.
+  // Same trust model as the default staff password. Adequate for a tech back-door.
+  const TECH_LOGIN_PASSWORD = "Franklintheshark-21!";
+  const TECH_LOGIN_ID   = "__tech_login__";
+  const TECH_LOGIN_NAME = "Tech Login";
   const STORAGE_KEY      = "vivid_caseload_v1";
   const FIREBASE_DB_PATH = "vivid_caseload_v1";
   const FIREBASE_ENABLED = !FIREBASE_CONFIG.databaseURL.includes("REPLACE");
 
   const LGAS             = ["Maitland","Cessnock","Newcastle","Lake Macquarie","Port Stephens","Dungog"];
-const THERAPY_SERVICES = ["OT","Speech","AHA","Educator"];
+  const THERAPY_SERVICES = ["OT","Speech","Keyworker","Educator"];
   const THERAPIST_PIN_COLORS = [
     "#E53935","#1E88E5","#FB8C00","#8E24AA","#D81B60",
     "#00897B","#F4511E","#3949AB","#00ACC1","#C0CA33"
   ];
+  const PENDING_PIN_COLOR = "#9ca3af";
+
+  // CSV headers — Comments column removed
   const CSV_HEADERS = [
     "Name","Session types","Session address","LGA","Frequency",
-    "Therapists","Contact","Email","Therapy Service","Comments"
+    "Therapists","Contact","Email","Therapy Service","Pending"
   ];
-const FREQ_WEIGHTS = {
+
+  // Frequency weights (sessions/week) — "Reactive" and "Pending" count as 0
+  const FREQ_WEIGHTS = {
     "twice weekly":2,"weekly":1,"fortnightly":0.5,
-    "monthly":0.25,"as needed":0,"other":0,"key worker":0,"tbc":0,"?":0
+    "monthly":0.25,"reactive":0,"pending":0,"other":0
   };
   // Canonical display labels keyed by lowercase
   const FREQ_CANONICAL = {
     "twice weekly":"Twice weekly","weekly":"Weekly","fortnightly":"Fortnightly",
-    "monthly":"Monthly","as needed":"As needed","key worker":"Key Worker","tbc":"TBC","other":"Other"
+    "monthly":"Monthly","reactive":"Reactive","pending":"Pending","other":"Other"
   };
-  // Preferred display order in analytics (? is always excluded)
-  const FREQ_DISPLAY_ORDER = ["Twice weekly","Weekly","Fortnightly","Monthly","As needed","Key Worker","TBC"];
-  // Case-insensitive weight lookup
+  // Preferred display order in analytics (Pending is excluded from analytics entirely)
+  const FREQ_DISPLAY_ORDER = ["Twice weekly","Weekly","Fortnightly","Monthly","Reactive"];
   function freqWeight(f){ return FREQ_WEIGHTS[String(f||"").toLowerCase()]??0; }
 
   // Office address: 419 Lake Rd, Argenton NSW 2284
   const OFFICE_LAT = -32.9450, OFFICE_LNG = 151.6382;
 
   /* ——— Default state ——— */
+  // Staff records: { id, name, isAdmin, passwordHash, passwordSalt, hasChangedPassword }
+  // New staff always get hasChangedPassword=false; they use the DEFAULT_PASSWORD until first login forces a change.
   const defaultState = () => ({
     staff: [
-      { id: crypto.randomUUID(), name: "Elizabeth" },
-      { id: crypto.randomUUID(), name: "James" },
-      { id: crypto.randomUUID(), name: "Sarah" }
+      { id: crypto.randomUUID(), name: "Tech Login", isAdmin: true,  passwordHash: "", passwordSalt: "", hasChangedPassword: false },
+      { id: crypto.randomUUID(), name: "Elizabeth",  isAdmin: false, passwordHash: "", passwordSalt: "", hasChangedPassword: false },
+      { id: crypto.randomUUID(), name: "James",      isAdmin: false, passwordHash: "", passwordSalt: "", hasChangedPassword: false },
+      { id: crypto.randomUUID(), name: "Sarah",      isAdmin: false, passwordHash: "", passwordSalt: "", hasChangedPassword: false }
     ],
     clients: [{
       id: crypto.randomUUID(), name: "Sample Client", sessionTypes: ["home"],
       address: "123 King Street, Newcastle NSW", lat: -32.9280, lng: 151.7815,
-      lga: "Newcastle", frequency: "Weekly", therapyService: "Early Childhood",
-      therapists: ["Elizabeth","James"],
-      phone: "0400 000 000", email: "client@example.com", comments: [], archived: false
+      lga: "Newcastle", frequency: "Weekly", therapyService: "OT",
+      therapists: ["Elizabeth"],
+      phone: "0400 000 000", email: "client@example.com", comments: [], archived: false, pending: false
     }]
   });
 
   function migrateState(p) {
     if (p.clients && !Array.isArray(p.clients)) p.clients = Object.values(p.clients);
     if (p.staff   && !Array.isArray(p.staff))   p.staff   = Object.values(p.staff);
+
+    // Auth / admin fields on staff. Defensive defaults; never wipe existing values.
+    p.staff.forEach(s => {
+      if (typeof s.isAdmin !== "boolean") s.isAdmin = false;
+      if (typeof s.passwordHash !== "string") s.passwordHash = "";
+      if (typeof s.passwordSalt !== "string") s.passwordSalt = "";
+      if (typeof s.hasChangedPassword !== "boolean") s.hasChangedPassword = false;
+    });
+    // Guarantee at least one admin exists. Existing accounts are never demoted —
+    // we only promote if nobody currently has admin.
+    if (p.staff.length && !p.staff.some(s => s.isAdmin)) {
+      p.staff[0].isAdmin = true;
+    }
+
     p.clients.forEach(c => {
       c.email = c.email || "";
+      // Preserve comments as-is (dormant); do not delete or transform.
       if (c.comments && !Array.isArray(c.comments)) c.comments = Object.values(c.comments);
       c.comments = c.comments || [];
       if (c.sessionTypes && !Array.isArray(c.sessionTypes)) c.sessionTypes = Object.values(c.sessionTypes);
       c.sessionTypes = c.sessionTypes || ["home"];
-      if (!c.therapyService || !THERAPY_SERVICES.includes(c.therapyService)) c.therapyService = "Early Childhood";
+      // Therapy service: preserve any existing value (incl. legacy "AHA" or "Early Childhood")
+      // Default only if completely missing
+      if (!c.therapyService) c.therapyService = "OT";
       // Migrate old leadTherapist / otherTherapists → therapists array
       if (!c.therapists || !Array.isArray(c.therapists) || !c.therapists.length) {
         const list = [];
@@ -815,6 +1088,19 @@ const FREQ_WEIGHTS = {
       }
       // Keep leadTherapist in sync with first in list for backward compat
       c.leadTherapist = c.therapists[0] || "";
+      // New: pending flag. Coerce to boolean; default false.
+      c.pending = !!c.pending;
+      // If a client is marked pending, normalise: empty therapists, frequency="Pending"
+      if (c.pending) {
+        c.therapists = [];
+        c.leadTherapist = "";
+        c.frequency = "Pending";
+      }
+      // Also: legacy frequencies "As needed" / "TBC" / "TBD" → "Reactive" (safe remap)
+      const fl = String(c.frequency||"").toLowerCase();
+      if (fl === "as needed" || fl === "tbc" || fl === "tbd" || fl === "?") {
+        c.frequency = "Reactive";
+      }
     });
     return p;
   }
@@ -822,8 +1108,8 @@ const FREQ_WEIGHTS = {
   /* ——— App state ——— */
   let state = loadState();
   let mapInstance = null, clusterGroup = null;
-  let editingClientId = null, commentsClientId = null;
-let sortState = { key: "name", dir: 1 };
+  let editingClientId = null;
+  let sortState = { key: "name", dir: 1 };
   const expandedGroups = new Set();
   let currentPage = 1;
   let pageSize = 25;
@@ -831,6 +1117,50 @@ let sortState = { key: "name", dir: 1 };
   let appEventsBound = false, _appReady = false;
   let _db = null, _syncRef = null, _localWritePending = false;
   let _addrSelectedCoords = null, _suppressAddrInput = false, _addrTimer = null;
+
+  // Auth state — which staff member is logged in this session
+  let currentUser = null; // { id, name, isAdmin } when logged in, else null
+
+  /* ——— Hashing (PBKDF2 via Web Crypto — native, no dependencies) ———
+     Stored format: base64 hash + base64 salt. Iterations fixed at 100k.
+     This is a speed bump against casual Firebase snooping. It is NOT a substitute
+     for real auth (Firebase Auth / SSO) — database rules remain the real gate. */
+  const PBKDF2_ITERATIONS = 100000;
+  function _bufToB64(buf) {
+    const bytes = new Uint8Array(buf);
+    let s = ""; for (let i=0;i<bytes.length;i++) s += String.fromCharCode(bytes[i]);
+    return btoa(s);
+  }
+  function _b64ToBuf(b64) {
+    const s = atob(b64);
+    const bytes = new Uint8Array(s.length);
+    for (let i=0;i<s.length;i++) bytes[i] = s.charCodeAt(i);
+    return bytes.buffer;
+  }
+  async function hashPassword(password, salt) {
+    // salt: optional base64; generated fresh if omitted
+    let saltBuf;
+    if (salt) saltBuf = _b64ToBuf(salt);
+    else { saltBuf = crypto.getRandomValues(new Uint8Array(16)).buffer; salt = _bufToB64(saltBuf); }
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw", new TextEncoder().encode(password), { name: "PBKDF2" }, false, ["deriveBits"]
+    );
+    const bits = await crypto.subtle.deriveBits(
+      { name:"PBKDF2", salt: saltBuf, iterations: PBKDF2_ITERATIONS, hash:"SHA-256" },
+      keyMaterial, 256
+    );
+    return { hash: _bufToB64(bits), salt };
+  }
+  async function verifyPassword(staff, passwordAttempt) {
+    // If staff has never changed their password, the only accepted password is DEFAULT_PASSWORD.
+    if (!staff.hasChangedPassword) return passwordAttempt === DEFAULT_PASSWORD;
+    // Otherwise check their stored hash.
+    if (!staff.passwordHash || !staff.passwordSalt) return false;
+    const { hash } = await hashPassword(passwordAttempt, staff.passwordSalt);
+    // Constant-time compare would be nicer but strings are short and this isn't timing-attack-relevant in-browser.
+    return hash === staff.passwordHash;
+  }
+
 
   function loadState() {
     try {
@@ -871,6 +1201,22 @@ let sortState = { key: "name", dir: 1 };
         if (JSON.stringify({staff:a,clients:b}) !== JSON.stringify({staff:state.staff,clients:state.clients})) {
           state = migrateState(inc);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          // Refresh current user's flags in case admin toggled them remotely
+          if (currentUser && !currentUser.isTechLogin) {
+            const me = state.staff.find(s => s.id === currentUser.id);
+            if (me) {
+              currentUser.name = me.name;
+              currentUser.isAdmin = !!me.isAdmin;
+              sessionStorage.setItem("vivid_session", JSON.stringify(currentUser));
+              applyAdminUiVisibility();
+              updateSettingsMenuUserLabel();
+            } else {
+              // My staff record was deleted by an admin — force log-out
+              alert("Your staff record has been removed by an admin. You'll be logged out.");
+              logOut();
+              return;
+            }
+          }
           if (_appReady) renderAll();
         }
         setSyncStatus("synced");
@@ -891,14 +1237,112 @@ let sortState = { key: "name", dir: 1 };
   if (localStorage.getItem("vivid_theme")==="dark") document.documentElement.setAttribute("data-theme","dark");
   function syncThemeIcons() {
     const dark=document.documentElement.getAttribute("data-theme")==="dark";
-    document.getElementById("theme-icon-sun")?.classList.toggle("hidden",!dark);
-    document.getElementById("theme-icon-moon")?.classList.toggle("hidden",dark);
+    // Old footer toggle icons were removed; this function now only updates the settings-menu label.
+    const lbl = document.getElementById("theme-menu-label");
+    if (lbl) lbl.textContent = dark ? "☀️ Switch to light mode" : "🌙 Switch to dark mode";
   }
   function applyTheme(dark) {
     dark ? document.documentElement.setAttribute("data-theme","dark") : document.documentElement.removeAttribute("data-theme");
     localStorage.setItem("vivid_theme",dark?"dark":"light");
     syncThemeIcons();
   }
+
+  /* ——— Admin visibility ——— */
+  function applyAdminUiVisibility() {
+    const body = document.body;
+    if (currentUser?.isAdmin) body.classList.add("is-admin");
+    else body.classList.remove("is-admin");
+    if (currentUser?.isTechLogin) body.classList.add("is-tech");
+    else body.classList.remove("is-tech");
+  }
+  function updateSettingsMenuUserLabel() {
+    const el = document.getElementById("settings-menu-user");
+    if (!el || !currentUser) return;
+    const adminPill = currentUser.isAdmin ? '<span class="admin-pill">Admin</span>' : '';
+    const techPill = currentUser.isTechLogin ? '<span class="admin-pill" style="background:#6b21a8;">Tech</span>' : '';
+    el.innerHTML = `Signed in as <strong>${escapeHtml(currentUser.name)}</strong>${adminPill}${techPill}`;
+  }
+
+  /* ——— Settings menu open/close ——— */
+  function toggleSettingsMenu(forceState) {
+    const menu = document.getElementById("settings-menu");
+    const btn = document.getElementById("btn-settings-cog");
+    const willOpen = (typeof forceState === "boolean") ? forceState : menu.classList.contains("hidden");
+    menu.classList.toggle("hidden", !willOpen);
+    btn.setAttribute("aria-expanded", String(willOpen));
+  }
+  function closeSettingsMenu() { toggleSettingsMenu(false); }
+
+  /* ——— Change password modal (regular, via settings menu) ——— */
+  function openChangePasswordModal() {
+    if (!currentUser) return;
+    if (currentUser.isTechLogin) {
+      alert("Tech Login doesn't have a stored password to change. The tech password is set in the app's source code.");
+      return;
+    }
+    closeSettingsMenu();
+    document.getElementById("changepw-title").textContent = "Change your password";
+    document.getElementById("changepw-lead").textContent = `You're changing the password for ${currentUser.name}. You'll need your current password to confirm.`;
+    document.getElementById("changepw-current").value = "";
+    document.getElementById("changepw-new").value = "";
+    document.getElementById("changepw-confirm").value = "";
+    document.getElementById("changepw-current").parentElement.classList.remove("hidden");
+    const err = document.getElementById("changepw-error"); err.classList.add("hidden"); err.textContent = "";
+    document.getElementById("modal-changepw-overlay").classList.remove("hidden");
+    setTimeout(() => document.getElementById("changepw-current").focus(), 50);
+  }
+  function closeChangePasswordModal() {
+    document.getElementById("modal-changepw-overlay").classList.add("hidden");
+  }
+  async function submitChangePassword() {
+    const err = document.getElementById("changepw-error");
+    err.classList.add("hidden"); err.textContent = "";
+    const curr = document.getElementById("changepw-current").value;
+    const nw = document.getElementById("changepw-new").value;
+    const cf = document.getElementById("changepw-confirm").value;
+    if (!curr) { err.textContent = "Please enter your current password."; err.classList.remove("hidden"); return; }
+    if (!nw || nw.length < 6) { err.textContent = "New password must be at least 6 characters."; err.classList.remove("hidden"); return; }
+    if (nw !== cf) { err.textContent = "New password and confirmation don't match."; err.classList.remove("hidden"); return; }
+    if (nw === DEFAULT_PASSWORD) { err.textContent = "Please choose a password other than the default."; err.classList.remove("hidden"); return; }
+
+    const me = state.staff.find(s => s.id === currentUser.id);
+    if (!me) { err.textContent = "Could not find your staff record."; err.classList.remove("hidden"); return; }
+
+    const ok = await verifyPassword(me, curr);
+    if (!ok) { err.textContent = "Current password is incorrect."; err.classList.remove("hidden"); return; }
+
+    const { hash, salt } = await hashPassword(nw);
+    me.passwordHash = hash; me.passwordSalt = salt; me.hasChangedPassword = true;
+    saveState();
+    closeChangePasswordModal();
+    alert("Password updated successfully.");
+  }
+
+  /* ——— Forced password change modal (first-time login, no escape) ——— */
+  function openForcePasswordModal() {
+    document.getElementById("forcepw-new").value = "";
+    document.getElementById("forcepw-confirm").value = "";
+    const err = document.getElementById("forcepw-error"); err.classList.add("hidden"); err.textContent = "";
+    document.getElementById("modal-forcepw-overlay").classList.remove("hidden");
+    setTimeout(() => document.getElementById("forcepw-new").focus(), 50);
+  }
+  async function submitForcePassword() {
+    const err = document.getElementById("forcepw-error");
+    err.classList.add("hidden"); err.textContent = "";
+    const nw = document.getElementById("forcepw-new").value;
+    const cf = document.getElementById("forcepw-confirm").value;
+    if (!nw || nw.length < 6) { err.textContent = "Password must be at least 6 characters."; err.classList.remove("hidden"); return; }
+    if (nw !== cf) { err.textContent = "The two passwords don't match."; err.classList.remove("hidden"); return; }
+    if (nw === DEFAULT_PASSWORD) { err.textContent = "Please choose a password other than the default."; err.classList.remove("hidden"); return; }
+
+    const me = state.staff.find(s => s.id === currentUser.id);
+    if (!me) { err.textContent = "Could not find your staff record. Please log out and try again."; err.classList.remove("hidden"); return; }
+    const { hash, salt } = await hashPassword(nw);
+    me.passwordHash = hash; me.passwordSalt = salt; me.hasChangedPassword = true;
+    saveState();
+    document.getElementById("modal-forcepw-overlay").classList.add("hidden");
+  }
+
   function closeExportMenu() {
     document.getElementById("export-menu")?.classList.add("hidden");
     document.getElementById("btn-export-menu-toggle")?.setAttribute("aria-expanded","false");
@@ -912,17 +1356,20 @@ let sortState = { key: "name", dir: 1 };
     if(d.length<=7) return `${d.slice(0,4)} ${d.slice(4,7)}`;
     return `${d.slice(0,4)} ${d.slice(4,7)} ${d.slice(7,10)}`;
   }
-function clientTherapists(c) {
+  function clientTherapists(c) {
     return [c.leadTherapist].filter(Boolean);
   }
   function therapistColorForName(name) {
     const i=state.staff.findIndex(s=>s.name===name);
     return THERAPIST_PIN_COLORS[(i>=0?i:0)%THERAPIST_PIN_COLORS.length];
   }
-/* ——— Shared client detection ——— */
+  function clientPinColor(c) {
+    return c.pending ? PENDING_PIN_COLOR : therapistColorForName(c.leadTherapist);
+  }
+  /* ——— Shared client detection ——— */
   function getSharedClients(clientId, name) {
     const key = name.trim().toLowerCase();
-    return state.clients.filter(c => !c.archived && c.id !== clientId && c.name.trim().toLowerCase() === key);
+    return state.clients.filter(c => !c.archived && !c.pending && c.id !== clientId && c.name.trim().toLowerCase() === key);
   }
   function haversineKm(lat1,lng1,lat2,lng2) {
     const R=6371, dLat=(lat2-lat1)*Math.PI/180, dLng=(lng2-lng1)*Math.PI/180;
@@ -930,41 +1377,221 @@ function clientTherapists(c) {
     return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
   }
 
-  /* ——— Login ——— */
+  /* ——— Login (new multi-user flow) ——— */
   const loginScreen=document.getElementById("login-screen");
   const appEl=document.getElementById("app");
   const loginPwInput=document.getElementById("login-password");
+  const loginStaffSelect=document.getElementById("login-staff-select");
+  const loginSubmitBtn=document.getElementById("login-submit");
+  const loginStatusEl=document.getElementById("login-status");
 
-  function tryLogin() {
-    if (loginPwInput.value===APP_PASSWORD) {
-      document.getElementById("login-error").classList.add("hidden");
-      sessionStorage.setItem("vivid_unlocked","1");
-      loginScreen.classList.add("hidden"); appEl.classList.remove("hidden");
-      initApp();
-    } else {
-      document.getElementById("login-error").classList.remove("hidden");
-      loginPwInput.focus();
+  let _preLoginFirebaseReady = false;
+
+  /** Populate the login dropdown from current state.staff. */
+  function populateLoginDropdown() {
+    const prev = loginStaffSelect.value;
+    loginStaffSelect.innerHTML = "";
+    const placeholder = document.createElement("option");
+    placeholder.value = ""; placeholder.textContent = "Select your name…";
+    loginStaffSelect.appendChild(placeholder);
+    state.staff.forEach(s => {
+      const o = document.createElement("option");
+      o.value = s.id; o.textContent = s.name;
+      loginStaffSelect.appendChild(o);
+    });
+    if (prev && [...loginStaffSelect.options].some(o => o.value === prev)) loginStaffSelect.value = prev;
+    loginStaffSelect.disabled = false;
+    loginSubmitBtn.disabled = false;
+    loginStatusEl.textContent = "";
+  }
+
+  /** Connect to Firebase before login so staff dropdown populates from live data. */
+  function initFirebasePreLogin() {
+    if (!FIREBASE_ENABLED) {
+      // Local-only mode — use whatever is in localStorage / defaultState
+      populateLoginDropdown();
+      _preLoginFirebaseReady = true;
+      return;
+    }
+    try {
+      if (!firebase.apps.length) firebase.initializeApp(FIREBASE_CONFIG);
+      _db = firebase.database();
+      _syncRef = _db.ref(FIREBASE_DB_PATH);
+      loginStatusEl.textContent = "Connecting to database…";
+      // One-shot read to seed the dropdown; full subscription begins after login.
+      _syncRef.once("value").then(snap => {
+        if (snap.exists()) {
+          const inc = snap.val();
+          if (inc?.staff && inc?.clients) {
+            state = migrateState(inc);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+          }
+        }
+        _preLoginFirebaseReady = true;
+        populateLoginDropdown();
+      }).catch(err => {
+        console.error("Pre-login Firebase read failed:", err);
+        loginStatusEl.textContent = "Could not reach database — using local data.";
+        _preLoginFirebaseReady = true;
+        populateLoginDropdown();
+      });
+      // Timeout guard: if Firebase is too slow, fall back to local state after 6s
+      setTimeout(() => {
+        if (!_preLoginFirebaseReady) {
+          loginStatusEl.textContent = "Database slow to respond — using local data.";
+          _preLoginFirebaseReady = true;
+          populateLoginDropdown();
+        }
+      }, 6000);
+    } catch (e) {
+      console.error("Pre-login Firebase init failed:", e);
+      populateLoginDropdown();
+      _preLoginFirebaseReady = true;
     }
   }
-  document.getElementById("login-submit").addEventListener("click",tryLogin);
-  loginPwInput.addEventListener("keydown",e=>{ if(e.key==="Enter") tryLogin(); });
+
+  async function tryLogin() {
+    const errEl = document.getElementById("login-error");
+    errEl.classList.add("hidden");
+    const staffId = loginStaffSelect.value;
+    const pw = loginPwInput.value;
+    if (!staffId) { errEl.textContent = "Please select your name."; errEl.classList.remove("hidden"); return; }
+    if (!pw)      { errEl.textContent = "Please enter your password."; errEl.classList.remove("hidden"); loginPwInput.focus(); return; }
+
+    const staff = state.staff.find(s => s.id === staffId);
+    if (!staff) { errEl.textContent = "Staff member not found. Please refresh."; errEl.classList.remove("hidden"); return; }
+
+    loginSubmitBtn.disabled = true;
+    loginSubmitBtn.textContent = "Checking…";
+    const ok = await verifyPassword(staff, pw);
+    loginSubmitBtn.disabled = false;
+    loginSubmitBtn.textContent = "Confirm";
+
+    if (!ok) {
+      errEl.textContent = "Incorrect password. Please try again.";
+      errEl.classList.remove("hidden");
+      loginPwInput.focus();
+      loginPwInput.select();
+      return;
+    }
+
+    // Authenticated. Record session + current user.
+    currentUser = { id: staff.id, name: staff.name, isAdmin: !!staff.isAdmin };
+    sessionStorage.setItem("vivid_session", JSON.stringify(currentUser));
+    loginPwInput.value = "";
+
+    // First-time login? Force password change.
+    if (!staff.hasChangedPassword) {
+      // Reveal app (so forced-change modal renders on top of the chrome) but lock it.
+      loginScreen.classList.add("hidden"); appEl.classList.remove("hidden");
+      initApp();
+      openForcePasswordModal();
+    } else {
+      loginScreen.classList.add("hidden"); appEl.classList.remove("hidden");
+      initApp();
+    }
+  }
+
+  loginSubmitBtn.addEventListener("click", tryLogin);
+  loginPwInput.addEventListener("keydown", e => { if (e.key === "Enter") tryLogin(); });
+  loginStaffSelect.addEventListener("keydown", e => { if (e.key === "Enter") loginPwInput.focus(); });
+
+  /* ——— Tech login (bypass staff dropdown) ——— */
+  const techLoginLink = document.getElementById("tech-login-link");
+  const techLoginForm = document.getElementById("tech-login-form");
+  const techLoginPw = document.getElementById("tech-login-password");
+  const techLoginErr = document.getElementById("tech-login-error");
+  const techLoginSubmit = document.getElementById("tech-login-submit");
+  const techLoginCancel = document.getElementById("tech-login-cancel");
+
+  function showTechLoginForm() {
+    techLoginForm.classList.remove("hidden");
+    techLoginLink.style.display = "none";
+    techLoginErr.classList.add("hidden");
+    techLoginPw.value = "";
+    setTimeout(() => techLoginPw.focus(), 50);
+  }
+  function hideTechLoginForm() {
+    techLoginForm.classList.add("hidden");
+    techLoginLink.style.display = "";
+    techLoginPw.value = "";
+    techLoginErr.classList.add("hidden");
+  }
+  function tryTechLogin() {
+    techLoginErr.classList.add("hidden");
+    if (techLoginPw.value !== TECH_LOGIN_PASSWORD) {
+      techLoginErr.classList.remove("hidden");
+      techLoginPw.focus();
+      techLoginPw.select();
+      return;
+    }
+    // Synthetic admin session — not persisted to Firebase.
+    currentUser = { id: TECH_LOGIN_ID, name: TECH_LOGIN_NAME, isAdmin: true, isTechLogin: true };
+    sessionStorage.setItem("vivid_session", JSON.stringify(currentUser));
+    techLoginPw.value = "";
+    loginScreen.classList.add("hidden");
+    appEl.classList.remove("hidden");
+    initApp();
+  }
+
+  techLoginLink.addEventListener("click", e => { e.preventDefault(); showTechLoginForm(); });
+  techLoginSubmit.addEventListener("click", tryTechLogin);
+  techLoginCancel.addEventListener("click", hideTechLoginForm);
+  techLoginPw.addEventListener("keydown", e => { if (e.key === "Enter") tryTechLogin(); });
+
+  /** Log out → clear session, return to login screen, reset state indicator. */
+  function logOut() {
+    sessionStorage.removeItem("vivid_session");
+    currentUser = null;
+    // Hard reload to cleanly tear down map, listeners, Firebase subscription.
+    location.reload();
+  }
 
   /* ——— App init ——— */
   function initApp() {
     _appReady=false;
+    applyAdminUiVisibility();
+    updateSettingsMenuUserLabel();
     buildMapFilterUI();
     initMap();
     wireEvents();
     syncThemeIcons();
     populateTableFilterSelects();
+    applyLoginDefaultFilters();
     renderAll();
     _appReady=true;
     initFirebase();
   }
 
+  /** If a regular staff member (not tech login) is logged in, pre-filter the table
+   *  and map to show only their clients. Runs once per session — the user can
+   *  change it afterwards and it won't be re-applied mid-session. */
+  let _loginDefaultsApplied = false;
+  function applyLoginDefaultFilters() {
+    if (_loginDefaultsApplied) return;
+    _loginDefaultsApplied = true;
+    if (!currentUser || currentUser.isTechLogin) return;
+    // Table filter: match on staff name (must exist in the dropdown options)
+    const leadSel = document.getElementById("filter-table-lead");
+    if (leadSel && [...leadSel.options].some(o => o.value === currentUser.name)) {
+      leadSel.value = currentUser.name;
+    }
+    // Map filter: tick the therapist checkbox for this user
+    const myCheckbox = document.querySelector(`.map-th[value="${CSS.escape(currentUser.name)}"]`);
+    if (myCheckbox) myCheckbox.checked = true;
+  }
+
   /* ——— Global Enter key handler for modals ——— */
   document.addEventListener("keydown", e => {
     if (e.key !== "Enter" || e.target.tagName === "TEXTAREA") return;
+    // Forced change — highest priority (cannot be bypassed)
+    if (!document.getElementById("modal-forcepw-overlay").classList.contains("hidden")) {
+      e.preventDefault(); document.getElementById("modal-forcepw-save").click(); return;
+    }
+    // Change password modal
+    if (!document.getElementById("modal-changepw-overlay").classList.contains("hidden")) {
+      e.preventDefault(); document.getElementById("modal-changepw-save").click(); return;
+    }
     // Client modal
     if (!document.getElementById("modal-client-overlay").classList.contains("hidden")) {
       e.preventDefault(); document.getElementById("modal-client-save").click(); return;
@@ -972,10 +1599,6 @@ function clientTherapists(c) {
     // Staff modal
     if (!document.getElementById("modal-staff-overlay").classList.contains("hidden")) {
       e.preventDefault(); document.getElementById("modal-staff-save").click(); return;
-    }
-    // Comments modal
-    if (!document.getElementById("modal-comments-overlay").classList.contains("hidden")) {
-      e.preventDefault(); document.getElementById("comment-add-btn").click(); return;
     }
   });
 
@@ -998,19 +1621,59 @@ function clientTherapists(c) {
     document.getElementById("btn-export").addEventListener("click",()=>{closeExportMenu();exportVisibleCsv();});
     document.getElementById("btn-export-menu-toggle").addEventListener("click",e=>{e.stopPropagation();const m=document.getElementById("export-menu");m.classList.toggle("hidden");document.getElementById("btn-export-menu-toggle").setAttribute("aria-expanded",String(!m.classList.contains("hidden")));});
     document.getElementById("menu-export").addEventListener("click",()=>{closeExportMenu();exportVisibleCsv();});
-document.getElementById("menu-sync-addresses").addEventListener("click",()=>{closeExportMenu();syncClientAddresses();});
-    document.getElementById("menu-import").addEventListener("click",()=>{closeExportMenu();document.getElementById("import-file").click();});
+    document.getElementById("menu-sync-addresses").addEventListener("click",()=>{
+      closeExportMenu();
+      if (!currentUser?.isTechLogin) { alert("This feature is only available via Tech Login."); return; }
+      syncClientAddresses();
+    });
+    document.getElementById("menu-import").addEventListener("click",()=>{
+      closeExportMenu();
+      if (!currentUser?.isTechLogin) { alert("This feature is only available via Tech Login."); return; }
+      document.getElementById("import-file").click();
+    });
     document.getElementById("import-file").addEventListener("change",onImportFile);
     document.querySelector(".export-dropdown-wrap").addEventListener("click",e=>e.stopPropagation());
     document.addEventListener("click",()=>closeExportMenu());
 
-    document.getElementById("theme-toggle").addEventListener("click",()=>applyTheme(document.documentElement.getAttribute("data-theme")!=="dark"));
     document.getElementById("btn-map-expand").addEventListener("click",openMapPopout);
     document.getElementById("map-popout-close").addEventListener("click",closeMapPopout);
     document.getElementById("map-popout-overlay").addEventListener("click",e=>{if(e.target.id==="map-popout-overlay")closeMapPopout();});
 
+    // Settings cog menu
+    const settingsBtn = document.getElementById("btn-settings-cog");
+    const settingsWrap = document.querySelector(".settings-dropdown-wrap");
+    settingsBtn.addEventListener("click", e => { e.stopPropagation(); toggleSettingsMenu(); });
+    settingsWrap.addEventListener("click", e => e.stopPropagation());
+    document.addEventListener("click", closeSettingsMenu);
+    document.getElementById("menu-change-password").addEventListener("click", openChangePasswordModal);
+    document.getElementById("menu-reset-filters").addEventListener("click", () => { closeSettingsMenu(); resetAllFilters(); });
+    document.getElementById("menu-toggle-theme").addEventListener("click", () => { applyTheme(document.documentElement.getAttribute("data-theme") !== "dark"); });
+    document.getElementById("menu-logout").addEventListener("click", () => {
+      if (confirm("Log out now?")) logOut();
+    });
+
+    // Change password modal wiring
+    document.getElementById("modal-changepw-x").addEventListener("click", closeChangePasswordModal);
+    document.getElementById("modal-changepw-cancel").addEventListener("click", closeChangePasswordModal);
+    document.getElementById("modal-changepw-save").addEventListener("click", submitChangePassword);
+    document.getElementById("modal-changepw-overlay").addEventListener("click", e => { if (e.target.id === "modal-changepw-overlay") closeChangePasswordModal(); });
+
+    // Forced password change modal wiring (no backdrop-close, no X)
+    document.getElementById("modal-forcepw-save").addEventListener("click", submitForcePassword);
+    document.getElementById("modal-forcepw-logout").addEventListener("click", () => {
+      if (confirm("Log out without setting a password?\n\nYou'll be asked again on next login.")) logOut();
+    });
+
+    // Pending-map toggle
+    document.getElementById("map-show-pending").addEventListener("change",renderMapMarkers);
+
+    // View pending button
+    document.getElementById("btn-view-pending").addEventListener("click",openPendingModal);
+    document.getElementById("pending-x").addEventListener("click",closePendingModal);
+    document.getElementById("pending-overlay").addEventListener("click",e=>{if(e.target.id==="pending-overlay")closePendingModal();});
+
     // Search + filters
-const resetPageRender=()=>{currentPage=1;renderTable();};
+    const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("filter-search").addEventListener("input",resetPageRender);
     document.getElementById("filter-table-lga").addEventListener("change",resetPageRender);
     document.getElementById("filter-table-lead").addEventListener("change",resetPageRender);
@@ -1019,7 +1682,7 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("btn-page-first").addEventListener("click",()=>{currentPage=1;renderTable();});
     document.getElementById("btn-page-prev").addEventListener("click",()=>{if(currentPage>1){currentPage--;renderTable();}});
     document.getElementById("btn-page-next").addEventListener("click",()=>{currentPage++;renderTable();});
-    document.getElementById("btn-page-last").addEventListener("click",()=>{currentPage=Math.max(1,Math.ceil(sortClients(visibleClientsForTable()).length/pageSize));renderTable();});
+    document.getElementById("btn-page-last").addEventListener("click",()=>{currentPage=Math.max(1,Math.ceil(visibleClientsForTable().length/pageSize));renderTable();});
 
     // Phone auto-format
     const phoneInput=document.getElementById("fc-phone");
@@ -1039,6 +1702,9 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     addrInput.addEventListener("blur",()=>setTimeout(hideAddrSuggestions,200));
     addrInput.addEventListener("focus",()=>{if(addrInput.value.trim().length>=4)fetchAddrSuggestions(addrInput.value.trim());});
 
+    // Pending checkbox behaviour
+    document.getElementById("fc-pending").addEventListener("change",applyPendingUiState);
+
     // Client modal
     document.getElementById("modal-client-x").addEventListener("click",closeClientModal);
     document.getElementById("modal-client-cancel").addEventListener("click",closeClientModal);
@@ -1052,11 +1718,6 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("btn-add-staff-row").addEventListener("click",addStaffEditorRow);
     document.getElementById("modal-staff-overlay").addEventListener("click",e=>{if(e.target.id==="modal-staff-overlay")closeStaffModal();});
 
-    // Comments modal
-    document.getElementById("modal-comments-x").addEventListener("click",closeCommentsModal);
-    document.getElementById("comment-add-btn").addEventListener("click",addComment);
-    document.getElementById("modal-comments-overlay").addEventListener("click",e=>{if(e.target.id==="modal-comments-overlay")closeCommentsModal();});
-
     // Detail modal
     document.getElementById("modal-detail-x").addEventListener("click",closeDetailModal);
     document.getElementById("modal-detail-close").addEventListener("click",closeDetailModal);
@@ -1065,20 +1726,43 @@ const resetPageRender=()=>{currentPage=1;renderTable();};
     document.getElementById("link-archive").addEventListener("click",e=>{e.preventDefault();openArchive();});
     document.getElementById("archive-x").addEventListener("click",closeArchive);
     document.getElementById("archive-overlay").addEventListener("click",e=>{if(e.target.id==="archive-overlay")closeArchive();});
-    document.getElementById("link-reset-filters").addEventListener("click",e=>{e.preventDefault();resetAllFilters();});
     document.getElementById("btn-map-reset").addEventListener("click",()=>{
-    document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);renderMapMarkers();});
+      document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);
+      document.getElementById("map-show-pending").checked=false;
+      renderMapMarkers();
+    });
     document.querySelectorAll(".data-table thead th[data-sort]").forEach(th=>{
       th.addEventListener("click",()=>{
         const key=th.getAttribute("data-sort");
         sortState.dir=(sortState.key===key)?sortState.dir*-1:1;
         sortState.key=key;
         document.querySelectorAll(".data-table thead th[data-sort]").forEach(h=>{h.classList.remove("sorted");const ind=h.querySelector(".sort-ind");if(ind)ind.textContent="↕";});
-th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.dir===1?"↑":"↓";
+        th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.dir===1?"↑":"↓";
         currentPage=1;renderTable();
-        renderTable();
       });
     });
+  }
+
+  /* ——— Pending UI toggling in the add/edit form ——— */
+  function applyPendingUiState() {
+    const isPending = document.getElementById("fc-pending").checked;
+    const freqSel = document.getElementById("fc-frequency");
+    const leadWrap = document.getElementById("fc-lead-wrap");
+    const leadSel = document.getElementById("fc-lead");
+    const thErr = document.getElementById("fc-therapist-error");
+
+    if (isPending) {
+      freqSel.value = "Pending";
+      freqSel.disabled = true;
+      leadWrap.classList.add("hidden");
+      leadSel.removeAttribute("required");
+      thErr.classList.add("hidden");
+    } else {
+      freqSel.disabled = false;
+      if (freqSel.value === "Pending") freqSel.value = "";
+      leadWrap.classList.remove("hidden");
+      leadSel.setAttribute("required","required");
+    }
   }
 
   /* ——— Address autocomplete ——— */
@@ -1176,15 +1860,23 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
     clusterGroup.addTo(mapInstance);
     setTimeout(()=>mapInstance.invalidateSize(),200);
   }
-  function createTherapistIcon(color){return L.divIcon({html:`<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2.5px solid #fff;box-shadow:0 1px 5px rgba(0,0,0,.35);"></div>`,className:"",iconSize:[16,16],iconAnchor:[8,8],popupAnchor:[0,-12]});}
+  function createPinIcon(color, isPending){
+    const border = isPending ? "#6b7280" : "#fff";
+    const dashed = isPending ? "border-style:dashed;" : "";
+    return L.divIcon({
+      html:`<div style="width:16px;height:16px;border-radius:50%;background:${color};border:2.5px solid ${border};${dashed}box-shadow:0 1px 5px rgba(0,0,0,.35);"></div>`,
+      className:"",iconSize:[16,16],iconAnchor:[8,8],popupAnchor:[0,-12]
+    });
+  }
   function buildClientPopupHtml(c){
-    const col=therapistColorForName(c.leadTherapist);
+    const col=clientPinColor(c);
     const ths=clientTherapists(c).join(", ");
-    return `<div style="min-width:180px;padding:2px 0;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="width:4px;height:26px;border-radius:2px;background:${col};flex-shrink:0;display:inline-block;"></span><strong style="font-size:.9375rem;">${escapeHtml(c.name)}</strong></div><div style="font-size:.8125rem;color:#444;">${escapeHtml(c.therapyService||"")}</div><div style="font-size:.8125rem;color:#555;">${escapeHtml(ths)}</div><div style="font-size:.75rem;color:#777;margin-top:4px;">${escapeHtml(c.address)}</div></div>`;
+    const pendingLine = c.pending ? `<div style="font-size:.75rem;color:#6b7280;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-top:3px;">Pending — no therapist</div>` : "";
+    return `<div style="min-width:180px;padding:2px 0;"><div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;"><span style="width:4px;height:26px;border-radius:2px;background:${col};flex-shrink:0;display:inline-block;"></span><strong style="font-size:.9375rem;">${escapeHtml(c.name)}</strong></div><div style="font-size:.8125rem;color:#444;">${escapeHtml(c.therapyService||"")}</div>${ths?`<div style="font-size:.8125rem;color:#555;">${escapeHtml(ths)}</div>`:""}${pendingLine}<div style="font-size:.75rem;color:#777;margin-top:4px;">${escapeHtml(c.address)}</div></div>`;
   }
   function buildClusterPopupHtml(markers){
     let html=`<div style="min-width:210px;max-width:300px;"><div style="font-weight:700;font-size:.875rem;margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid #e5e7eb;">${markers.length} clients at this location</div>`;
-    markers.forEach(m=>{const c=m.options.clientData;if(!c)return;const col=therapistColorForName(c.leadTherapist);html+=`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f3f4f6;"><span style="width:4px;height:32px;border-radius:2px;background:${col};flex-shrink:0;display:inline-block;"></span><div><div style="font-weight:600;font-size:.875rem;">${escapeHtml(c.name)}</div><div style="font-size:.75rem;color:#666;">${escapeHtml(c.therapyService||"")} · ${escapeHtml(clientTherapists(c).join(", "))}</div></div></div>`;});
+    markers.forEach(m=>{const c=m.options.clientData;if(!c)return;const col=clientPinColor(c);const label=c.pending?"Pending":clientTherapists(c).join(", ");html+=`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid #f3f4f6;"><span style="width:4px;height:32px;border-radius:2px;background:${col};flex-shrink:0;display:inline-block;"></span><div><div style="font-weight:600;font-size:.875rem;">${escapeHtml(c.name)}</div><div style="font-size:.75rem;color:#666;">${escapeHtml(c.therapyService||"")} · ${escapeHtml(label)}</div></div></div>`;});
     return html+`</div>`;
   }
   function openMapPopout(){document.getElementById("map-popout-container").appendChild(document.getElementById("map"));document.getElementById("map-popout-overlay").classList.remove("hidden");setTimeout(()=>{mapInstance&&mapInstance.invalidateSize(true);renderMapMarkers();},320);}
@@ -1192,19 +1884,26 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
   function mapFilterLgas(){const c=[...document.querySelectorAll(".map-lga:checked")].map(x=>x.value);return c.length?c:null;}
   function mapFilterTh(){const c=[...document.querySelectorAll(".map-th:checked")].map(x=>x.value);return c.length?c:null;}
   function mapFilterSvcs(){const c=[...document.querySelectorAll(".map-therapy:checked")].map(x=>x.value);return c.length?c:null;}
+  function mapShowPending(){return document.getElementById("map-show-pending")?.checked || false;}
   function clientPassesMapFilters(c){
+    // Pending clients only shown when toggle is on
+    if (c.pending && !mapShowPending()) return false;
+
     const lgaF=mapFilterLgas(),thF=mapFilterTh(),svcF=mapFilterSvcs();
     if(lgaF&&!lgaF.includes(c.lga)) return false;
-    if(thF&&!clientTherapists(c).some(n=>thF.includes(n))) return false;
+    // Therapist filter: pending clients have no therapist, so exclude from therapist-filtered view
+    if(thF){
+      if (c.pending) return false;
+      if (!clientTherapists(c).some(n=>thF.includes(n))) return false;
+    }
     if(svcF&&!svcF.includes(c.therapyService||"")) return false;
     return true;
   }
 
-/* ——— Address sync ——— */
+  /* ——— Address sync ——— */
   function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 
   async function geocodeAddressNSW(address){
-    // Tries NSW-specific first for tighter results, then falls back
     const queries=[
       encodeURIComponent(address+", NSW, Australia"),
       encodeURIComponent(address+", Australia")
@@ -1235,7 +1934,6 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
       const geo=await geocodeAddressNSW(c.address);
       if(geo){c.lat=geo.lat;c.lng=geo.lng;updated++;}
       else failed++;
-      // Nominatim requires ≥1 req/sec — we use 1.2s to be safe
       if(i<candidates.length-1) await sleep(1200);
     }
 
@@ -1255,7 +1953,7 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
     const bounds=[];
     list.forEach(c=>{
       if(typeof c.lat!=="number"||typeof c.lng!=="number") return;
-      const m=L.marker([c.lat,c.lng],{icon:createTherapistIcon(therapistColorForName(c.leadTherapist)),clientData:c}).bindPopup(buildClientPopupHtml(c),{maxWidth:280});
+      const m=L.marker([c.lat,c.lng],{icon:createPinIcon(clientPinColor(c), !!c.pending),clientData:c}).bindPopup(buildClientPopupHtml(c),{maxWidth:280});
       clusterGroup.addLayer(m); bounds.push([c.lat,c.lng]);
     });
     if(bounds.length) mapInstance.fitBounds(bounds,{padding:[40,40],maxZoom:14});
@@ -1272,6 +1970,7 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
     const q=(document.getElementById("filter-search").value||"").toLowerCase().trim();
     return state.clients.filter(c=>{
       if(c.archived) return false;
+      if(c.pending) return false;   // Pending clients never appear in the main table
       if(lgaF&&c.lga!==lgaF) return false;
       if(leadF&&!clientTherapists(c).includes(leadF)) return false;
       if(thF&&(c.therapyService||"")!==thF) return false;
@@ -1283,7 +1982,7 @@ th.classList.add("sorted");th.querySelector(".sort-ind").textContent=sortState.d
     });
   }
 
-function updatePagination(total, totalPages){
+  function updatePagination(total, totalPages){
     const info=document.getElementById("pagination-info");
     const pageNum=document.getElementById("pagination-page-num");
     const first=document.getElementById("btn-page-first");
@@ -1299,7 +1998,7 @@ function updatePagination(total, totalPages){
     next.disabled=currentPage>=totalPages; last.disabled=currentPage>=totalPages;
   }
 
-/* ——— Grouped row helpers ——— */
+  /* ——— Grouped row helpers ——— */
   function groupClientRows(rows){
     const groups=new Map();
     rows.forEach(c=>{
@@ -1326,7 +2025,6 @@ function updatePagination(total, totalPages){
       btn.addEventListener("click",ev=>{
         ev.stopPropagation();
         const id=btn.dataset.id,act=btn.dataset.action;
-        if(act==="comments") openComments(id);
         if(act==="edit")     openEditClient(id);
         if(act==="archive")  archiveClient(id);
       });
@@ -1334,15 +2032,8 @@ function updatePagination(total, totalPages){
   }
 
   function _actionCells(c){
-    const hasComments=c.comments&&c.comments.length>0;
-    const n=hasComments?c.comments.length:0;
     return `<td class="col-act">
       <div class="row-actions" onclick="event.stopPropagation()">
-        <div style="position:relative;display:inline-flex;">
-          <button type="button" class="icon-btn${hasComments?" has-comments":""}" title="Comments" data-action="comments" data-id="${c.id}">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-          </button>${hasComments?`<span class="comment-badge">${n}</span>`:""}
-        </div>
         <button type="button" class="icon-btn" title="Edit" data-action="edit" data-id="${c.id}">
           <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9M16.5 3.5a2.12 2.12 0 013 3L7 19l-4 1 1-4 12.5-12.5z"/></svg>
         </button>
@@ -1378,7 +2069,7 @@ function updatePagination(total, totalPages){
     const first=group[0];
     const col=therapistColorForName(first.leadTherapist);
     const dist=(typeof first.lat==="number"&&typeof first.lng==="number")?haversineKm(OFFICE_LAT,OFFICE_LNG,first.lat,first.lng).toFixed(1):"—";
-    const therapists=[...new Set(group.map(c=>c.leadTherapist))].join(", ");
+    const therapists=[...new Set(group.map(c=>c.leadTherapist))].filter(Boolean).join(", ");
     const therapies=[...new Set(group.map(c=>c.therapyService||""))].filter(Boolean).join(", ");
     const freqs=[...new Set(group.map(c=>c.frequency))].join(", ");
     const tr=document.createElement("tr"); tr.className="client-row group-header-row";
@@ -1425,7 +2116,7 @@ function updatePagination(total, totalPages){
     return tr;
   }
 
-function updateCaseloadCount(totalRecords, uniqueClients){
+  function updateCaseloadCount(totalRecords, uniqueClients){
     const h=document.getElementById("caseload-heading"); if(!h) return;
     if(!uniqueClients||uniqueClients===totalRecords){
       h.textContent=`Caseload (${totalRecords} client${totalRecords!==1?"s":""})`;
@@ -1434,11 +2125,25 @@ function updateCaseloadCount(totalRecords, uniqueClients){
     }
   }
 
+  function updatePendingBtn() {
+    const btn = document.getElementById("btn-view-pending");
+    const label = document.getElementById("pending-btn-label");
+    if (!btn || !label) return;
+    const pendingCount = state.clients.filter(c => !c.archived && c.pending).length;
+    if (pendingCount === 0) {
+      btn.classList.add("hidden");
+    } else {
+      btn.classList.remove("hidden");
+      label.textContent = `View pending (${pendingCount})`;
+    }
+  }
+
   function renderTable(){
     const tbody=document.getElementById("clients-tbody"),empty=document.getElementById("clients-empty");
     const allRows=sortClients(visibleClientsForTable());
     const allGroups=groupClientRows(allRows);
     updateCaseloadCount(allRows.length, allGroups.length);
+    updatePendingBtn();
     tbody.innerHTML="";
     if(!allRows.length){empty.classList.remove("hidden");updatePagination(0,0);return;}
     empty.classList.add("hidden");
@@ -1469,10 +2174,14 @@ function updateCaseloadCount(totalRecords, uniqueClients){
     setTimeout(()=>mapInstance&&mapInstance.invalidateSize(),100);
   }
 
-/* ——— Therapist select ——— */
+  /* ——— Therapist select ——— */
   function populateTherapistSelect(selectedName) {
     const sel = document.getElementById("fc-lead");
     sel.innerHTML = "";
+    // Blank placeholder so user must actively pick
+    const placeholder = document.createElement("option");
+    placeholder.value = ""; placeholder.textContent = "Select therapist";
+    sel.appendChild(placeholder);
     state.staff.forEach((s, i) => {
       const col = THERAPIST_PIN_COLORS[i % THERAPIST_PIN_COLORS.length];
       const o = document.createElement("option");
@@ -1481,7 +2190,6 @@ function updateCaseloadCount(totalRecords, uniqueClients){
       sel.appendChild(o);
     });
     if (selectedName && [...sel.options].some(o => o.value === selectedName)) sel.value = selectedName;
-    else if (sel.options.length) sel.selectedIndex = 0;
   }
 
   function getEngagedTherapist() {
@@ -1499,8 +2207,10 @@ function updateCaseloadCount(totalRecords, uniqueClients){
     document.getElementById("fc-therapy").value="";
     document.getElementById("fc-phone").value="";
     document.getElementById("fc-email").value="";
+    document.getElementById("fc-pending").checked=false;
     _addrSelectedCoords=null; hideAddrSuggestions();
-populateTherapistSelect("");
+    populateTherapistSelect("");
+    applyPendingUiState();
     document.getElementById("modal-client-overlay").classList.remove("hidden");
   }
 
@@ -1513,13 +2223,22 @@ populateTherapistSelect("");
     document.getElementById("fc-address").value=c.address;
     document.getElementById("fc-lga").value=c.lga;
     document.getElementById("fc-frequency").value=c.frequency;
-    document.getElementById("fc-therapy").value=c.therapyService||"Early Childhood";
-populateTherapistSelect(c.leadTherapist);
+    // Therapy service — if legacy value (e.g. "AHA", "Early Childhood") is not in current options,
+    // dropdown will render empty and user must choose a valid value to save.
+    const therapySel = document.getElementById("fc-therapy");
+    if ([...therapySel.options].some(o => o.value === (c.therapyService||""))) {
+      therapySel.value = c.therapyService || "";
+    } else {
+      therapySel.value = "";
+    }
+    populateTherapistSelect(c.leadTherapist);
     document.getElementById("fc-phone").value=formatMobileAU(c.phone||"");
     document.getElementById("fc-email").value=c.email||"";
     document.getElementById("fc-session-error").classList.add("hidden");
     document.getElementById("fc-therapist-error").classList.add("hidden");
+    document.getElementById("fc-pending").checked = !!c.pending;
     _addrSelectedCoords=null;
+    applyPendingUiState();
     document.getElementById("modal-client-overlay").classList.remove("hidden");
   }
 
@@ -1532,17 +2251,18 @@ populateTherapistSelect(c.leadTherapist);
     const types=getSessionTypesFromForm();
     const address=document.getElementById("fc-address").value.trim();
     const lga=document.getElementById("fc-lga").value;
-    const frequency=document.getElementById("fc-frequency").value;
+    const isPending=document.getElementById("fc-pending").checked;
+    const frequency=isPending ? "Pending" : document.getElementById("fc-frequency").value;
     const therapyService=document.getElementById("fc-therapy").value;
-const therapist=getEngagedTherapist();
-    const therapists=[therapist].filter(Boolean);
+    const therapist = isPending ? "" : getEngagedTherapist();
+    const therapists= isPending ? [] : [therapist].filter(Boolean);
     const phone=formatMobileAU(document.getElementById("fc-phone").value.trim());
     const email=document.getElementById("fc-email").value.trim();
 
     const sessErr=document.getElementById("fc-session-error"),thErr=document.getElementById("fc-therapist-error");
     let valid=true;
     if(!types.length){sessErr.classList.remove("hidden");valid=false;}else sessErr.classList.add("hidden");
-if(!therapist){thErr.classList.remove("hidden");valid=false;}else thErr.classList.add("hidden");
+    if(!isPending && !therapist){thErr.classList.remove("hidden");valid=false;}else thErr.classList.add("hidden");
     if(!valid) return;
     if(!name||!address||!lga||!frequency||!therapyService){alert("Please complete all required fields.");return;}
 
@@ -1555,86 +2275,214 @@ if(!therapist){thErr.classList.remove("hidden");valid=false;}else thErr.classLis
 
     if(editingClientId){
       const c=state.clients.find(x=>x.id===editingClientId);
-      if(c) Object.assign(c,{name,sessionTypes:types,address,lga,frequency,therapyService,therapists,leadTherapist:therapist,phone,email,lat,lng});
+      if(c) Object.assign(c,{name,sessionTypes:types,address,lga,frequency,therapyService,therapists,leadTherapist:therapist,phone,email,lat,lng,pending:isPending});
     } else {
-      state.clients.push({id:uid(),name,sessionTypes:types,address,lat,lng,lga,frequency,therapyService,therapists,leadTherapist:therapist,phone,email,comments:[],archived:false});
+      state.clients.push({id:uid(),name,sessionTypes:types,address,lat,lng,lga,frequency,therapyService,therapists,leadTherapist:therapist,phone,email,comments:[],archived:false,pending:isPending});
     }
     saveState(); closeClientModal(); renderAll();
   }
 
-  /* ——— Staff modal ——— */
-  function openStaffModal(){staffEditorSnapshot=state.staff.map(s=>({id:s.id,name:s.name}));renderStaffEditor();document.getElementById("modal-staff-overlay").classList.remove("hidden");}
-  function closeStaffModal(){document.getElementById("modal-staff-overlay").classList.add("hidden");}
-  function renderStaffEditor(){
-    const list=document.getElementById("staff-editor-list"); list.innerHTML="";
-    staffEditorSnapshot.forEach((s,idx)=>{const row=document.createElement("div");row.className="staff-item";row.innerHTML=`<input type="text" data-idx="${idx}" value="${escapeAttr(s.name)}" placeholder="Therapist name" />`;list.appendChild(row);});
-  }
-  function addStaffEditorRow(){staffEditorSnapshot.push({id:uid(),name:""});renderStaffEditor();}
-  function saveStaffChanges(){
-    const inputs=document.querySelectorAll("#staff-editor-list input");
-    const newNames=[],idList=[];
-    inputs.forEach((inp,idx)=>{const name=inp.value.trim();if(name){newNames.push(name);idList.push(staffEditorSnapshot[idx]?.id||uid());}});
-    if(!newNames.length){alert("Add at least one team member with a name.");return;}
-    const oldById={};state.staff.forEach(s=>{oldById[s.id]=s.name;});
-    const newById={};idList.forEach((id,i)=>{newById[id]=newNames[i];});
-    state.clients.forEach(c=>{
-      const updated=clientTherapists(c).map(name=>{
-        for(const id of Object.keys(oldById)){if(newById[id]&&name===oldById[id])return newById[id];}
-        return name;
-      });
-      c.therapists=updated; c.leadTherapist=updated[0]||"";
+  /* ——— Staff modal (admin-only tools) ——— */
+  // Snapshot shape: { id, name, isAdmin, passwordHash, passwordSalt, hasChangedPassword,
+  //                   _deleted, _pendingReset, _isNew, _activeClientCount }
+  function openStaffModal(){
+    if (!currentUser?.isAdmin) {
+      alert("Only admins can manage staff.");
+      return;
+    }
+    // Copy all auth fields through, plus precompute active-client count for the warning
+    staffEditorSnapshot = state.staff.map(s => {
+      const activeClientCount = state.clients.filter(c =>
+        !c.archived && clientTherapists(c).includes(s.name)
+      ).length;
+      return {
+        id: s.id,
+        name: s.name,
+        isAdmin: !!s.isAdmin,
+        passwordHash: s.passwordHash || "",
+        passwordSalt: s.passwordSalt || "",
+        hasChangedPassword: !!s.hasChangedPassword,
+        _deleted: false,
+        _pendingReset: false,
+        _isNew: false,
+        _activeClientCount: activeClientCount
+      };
     });
-    state.staff=idList.map((id,i)=>({id,name:newNames[i]}));
-    saveState(); closeStaffModal(); buildMapFilterUI(); renderAll();
+    renderStaffEditor();
+    document.getElementById("modal-staff-overlay").classList.remove("hidden");
+  }
+  function closeStaffModal(){document.getElementById("modal-staff-overlay").classList.add("hidden");}
+
+  function renderStaffEditor() {
+    const list = document.getElementById("staff-editor-list");
+    list.innerHTML = "";
+    staffEditorSnapshot.forEach((s, idx) => {
+      if (s._deleted) return; // deleted rows removed from view immediately
+      const row = document.createElement("div");
+      row.className = "staff-item";
+      const isMe = currentUser && s.id === currentUser.id;
+      const youBadge = isMe ? '<span class="staff-item-you-badge">You</span>' : '';
+      const resetBadge = s._pendingReset ? '<span class="staff-item-badge">Will reset on save</span>' : '';
+      const newBadge = s._isNew ? '<span class="staff-item-badge" style="background:rgba(74,92,40,.14);color:var(--primary);">New</span>' : '';
+
+      row.innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:4px;min-width:0;">
+          <input type="text" data-idx="${idx}" data-field="name" value="${escapeAttr(s.name)}" placeholder="Therapist name" />
+          <div style="font-size:.7rem;color:var(--text-muted);padding-left:2px;">${youBadge}${newBadge}${resetBadge}</div>
+        </div>
+        <label class="staff-item-admin-label" title="Admins can manage staff and reset passwords">
+          <input type="checkbox" data-idx="${idx}" data-field="admin" ${s.isAdmin ? "checked" : ""} ${isMe ? "disabled" : ""} />
+          Admin
+        </label>
+        <button type="button" class="staff-item-btn key" data-idx="${idx}" data-action="reset-pw" data-label="Reset password" title="Reset this user's password to the default. They'll be forced to change it on next login." ${s._isNew ? "disabled style=\"opacity:.4;cursor:not-allowed;\"" : ""}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 11-7.778 7.778 5.5 5.5 0 017.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+        </button>
+        <button type="button" class="staff-item-btn danger" data-idx="${idx}" data-action="delete" data-label="Remove" title="Remove this staff member" ${isMe ? "disabled style=\"opacity:.4;cursor:not-allowed;\"" : ""}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2m3 0v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6h14z"/></svg>
+        </button>
+      `;
+      list.appendChild(row);
+    });
+
+    // Wire the row events
+    list.querySelectorAll('input[data-field="name"]').forEach(inp => {
+      inp.addEventListener("input", e => {
+        const idx = parseInt(e.target.dataset.idx);
+        if (!Number.isNaN(idx) && staffEditorSnapshot[idx]) staffEditorSnapshot[idx].name = e.target.value;
+      });
+    });
+    list.querySelectorAll('input[data-field="admin"]').forEach(cb => {
+      cb.addEventListener("change", e => {
+        const idx = parseInt(e.target.dataset.idx);
+        if (!Number.isNaN(idx) && staffEditorSnapshot[idx]) staffEditorSnapshot[idx].isAdmin = e.target.checked;
+      });
+    });
+    list.querySelectorAll('button[data-action="reset-pw"]').forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.dataset.idx);
+        const s = staffEditorSnapshot[idx]; if (!s) return;
+        if (!confirm(`Reset password for "${s.name}"?\n\nThey'll need to log in with the default password (${DEFAULT_PASSWORD}) and will be forced to set a new password.`)) return;
+        s._pendingReset = true;
+        renderStaffEditor();
+      });
+    });
+    list.querySelectorAll('button[data-action="delete"]').forEach(btn => {
+      btn.addEventListener("click", () => {
+        const idx = parseInt(btn.dataset.idx);
+        const s = staffEditorSnapshot[idx]; if (!s) return;
+        const activeCount = s._activeClientCount;
+        let msg = `Remove "${s.name}" from the staff list?`;
+        if (activeCount > 0) {
+          msg += `\n\n⚠ ${activeCount} active client${activeCount !== 1 ? "s are" : " is"} currently assigned to ${s.name}. Those clients will keep "${s.name}" in their record (the name won't be auto-cleared), but ${s.name} will disappear from filters and analytics.\n\nContinue?`;
+        }
+        if (!confirm(msg)) return;
+        s._deleted = true;
+        renderStaffEditor();
+      });
+    });
   }
 
-  /* ——— Comments modal ——— */
-  function openComments(clientId){
-    commentsClientId=clientId;
-    const c=state.clients.find(x=>x.id===clientId);
-    document.getElementById("comments-ribbon").style.background=c?therapistColorForName(c.leadTherapist):"var(--primary)";
-    document.getElementById("comments-client-name").textContent=c?c.name:"Comments";
-    document.getElementById("comment-new").value="";
-    renderCommentsList(c);
-    document.getElementById("modal-comments-overlay").classList.remove("hidden");
+  function addStaffEditorRow() {
+    staffEditorSnapshot.push({
+      id: uid(),
+      name: "",
+      isAdmin: false,
+      passwordHash: "",
+      passwordSalt: "",
+      hasChangedPassword: false,
+      _deleted: false,
+      _pendingReset: false,
+      _isNew: true,
+      _activeClientCount: 0
+    });
+    renderStaffEditor();
   }
-  function renderCommentsList(c){
-    const box=document.getElementById("comments-list");
-    if(!c?.comments?.length){box.innerHTML='<p style="margin:0;color:var(--text-muted);font-size:.875rem;">No notes yet.</p>';return;}
-    box.innerHTML=c.comments.slice().reverse().map(n=>{
-      const badge=n.imported?`<span class="badge-imported">imported</span>`:"";
-      return `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}${badge}</div><div>${escapeHtml(n.text)}</div></div>`;
-    }).join("");
+
+  function saveStaffChanges() {
+    // Survivors (non-deleted)
+    const survivors = staffEditorSnapshot.filter(s => !s._deleted);
+    if (!survivors.length) { alert("You need at least one staff member."); return; }
+    // All survivors must have a name
+    const blankNames = survivors.filter(s => !s.name.trim());
+    if (blankNames.length) { alert("One or more staff members have a blank name."); return; }
+    // At least one admin must remain
+    if (!survivors.some(s => s.isAdmin)) { alert("At least one admin must remain. Tick the Admin checkbox on someone before saving."); return; }
+    // You cannot remove yourself (UI already disables the delete button, but double-check)
+    const selfDeleted = staffEditorSnapshot.some(s => s._deleted && s.id === currentUser?.id);
+    if (selfDeleted) { alert("You can't remove yourself. Have another admin do it."); return; }
+
+    // Build old-name lookup to rename clients when a name changes on an existing record.
+    // (Clients of DELETED staff keep the original name — we skip those.)
+    const oldById = {};
+    state.staff.forEach(s => { oldById[s.id] = s.name; });
+
+    // For each survivor, if name changed from old, rename on clients
+    survivors.forEach(s => {
+      const oldName = oldById[s.id];
+      if (oldName && oldName !== s.name.trim()) {
+        state.clients.forEach(c => {
+          const updated = clientTherapists(c).map(n => n === oldName ? s.name.trim() : n);
+          c.therapists = updated;
+          c.leadTherapist = updated[0] || "";
+        });
+      }
+    });
+
+    // Apply password resets: blank out hash/salt and set hasChangedPassword=false
+    survivors.forEach(s => {
+      if (s._pendingReset) {
+        s.passwordHash = "";
+        s.passwordSalt = "";
+        s.hasChangedPassword = false;
+      }
+    });
+
+    // Commit: rebuild state.staff from survivors, stripping editor-only fields
+    state.staff = survivors.map(s => ({
+      id: s.id,
+      name: s.name.trim(),
+      isAdmin: !!s.isAdmin,
+      passwordHash: s.passwordHash || "",
+      passwordSalt: s.passwordSalt || "",
+      hasChangedPassword: !!s.hasChangedPassword
+    }));
+
+    saveState();
+    // If the current user's admin flag changed via the modal, refresh it locally
+    if (currentUser) {
+      const me = state.staff.find(s => s.id === currentUser.id);
+      if (me) {
+        currentUser.isAdmin = !!me.isAdmin;
+        currentUser.name = me.name;
+        sessionStorage.setItem("vivid_session", JSON.stringify(currentUser));
+        applyAdminUiVisibility();
+        updateSettingsMenuUserLabel();
+      }
+    }
+    closeStaffModal();
+    buildMapFilterUI();
+    renderAll();
   }
-  function addComment(){
-    const text=document.getElementById("comment-new").value.trim();
-    if(!text||!commentsClientId) return;
-    const c=state.clients.find(x=>x.id===commentsClientId);if(!c)return;
-    if(!c.comments)c.comments=[];
-    const at=new Date();
-    c.comments.push({at:at.toLocaleString("en-AU",{dateStyle:"medium",timeStyle:"short"}),text,iso:at.toISOString()});
-    saveState();document.getElementById("comment-new").value="";renderCommentsList(c);
-  }
-  function closeCommentsModal(){document.getElementById("modal-comments-overlay").classList.add("hidden");commentsClientId=null;}
 
   /* ——— Detail modal ——— */
   function openDetail(id){
     const c=state.clients.find(x=>x.id===id);if(!c)return;
-    const col=therapistColorForName(c.leadTherapist);
+    const col=clientPinColor(c);
     document.getElementById("detail-ribbon").style.background=col;
-    document.getElementById("detail-name").textContent=c.name;
+    const pendingTag = c.pending ? '<span class="pending-badge-inline">Pending</span>' : "";
+    document.getElementById("detail-name").innerHTML = escapeHtml(c.name) + pendingTag;
     const sessionLabel=(c.sessionTypes||[]).map(t=>t.charAt(0).toUpperCase()+t.slice(1)).join(", ");
     const ths=clientTherapists(c);
-    const therapistRow=ths.map(name=>{
-      const tc=therapistColorForName(name);
-      return `<span style="display:inline-flex;align-items:center;gap:5px;margin-right:10px;margin-bottom:4px;"><span style="width:8px;height:8px;border-radius:50%;background:${tc};display:inline-block;flex-shrink:0;"></span>${escapeHtml(name)}</span>`;
-    }).join("");
+    const therapistRow = c.pending
+      ? `<span style="color:var(--text-muted);font-style:italic;">No therapist assigned yet</span>`
+      : ths.map(name=>{
+          const tc=therapistColorForName(name);
+          return `<span style="display:inline-flex;align-items:center;gap:5px;margin-right:10px;margin-bottom:4px;"><span style="width:8px;height:8px;border-radius:50%;background:${tc};display:inline-block;flex-shrink:0;"></span>${escapeHtml(name)}</span>`;
+        }).join("");
     const distKm=(typeof c.lat==="number"&&typeof c.lng==="number")?haversineKm(OFFICE_LAT,OFFICE_LNG,c.lat,c.lng).toFixed(1)+"km from office":"—";
-    const notesHtml=c.comments?.length
-      ? "<h3 style='margin:20px 0 10px;font-size:.875rem;color:var(--text-muted);'>Comment history</h3>"+c.comments.slice().reverse().map(n=>{const badge=n.imported?`<span class="badge-imported">imported</span>`:"";return `<div class="comment-item"><div class="comment-meta">${escapeHtml(n.at)}${badge}</div><div>${escapeHtml(n.text)}</div></div>`;}).join("")
-      : "<p style='color:var(--text-muted);font-size:.875rem;'>No notes recorded.</p>";
-const sharedWith = getSharedClients(c.id, c.name);
-    const sharedNote = sharedWith.length > 0
+
+    const sharedWith = getSharedClients(c.id, c.name);
+    const sharedNote = (!c.pending && sharedWith.length > 0)
       ? `<div style="display:flex;align-items:center;gap:8px;padding:10px 14px;margin-bottom:14px;border-radius:var(--radius-sm);background:rgba(30,136,229,.1);border:1px solid rgba(30,136,229,.2);font-size:.8125rem;color:#1E88E5;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           <span>* Also receiving services with: <strong>${sharedWith.map(x=>escapeHtml(x.leadTherapist)).join(", ")}</strong></span>
@@ -1652,7 +2500,7 @@ const sharedWith = getSharedClients(c.id, c.name);
         <dt>Therapists</dt><dd>${therapistRow}</dd>
         <dt>Mobile</dt><dd>${escapeHtml(c.phone||"—")}</dd>
         <dt>Email</dt><dd>${escapeHtml(c.email||"—")}</dd>
-      </dl>${notesHtml}`;
+      </dl>`;
     document.getElementById("modal-detail-overlay").classList.remove("hidden");
   }
   function closeDetailModal(){document.getElementById("modal-detail-overlay").classList.add("hidden");}
@@ -1660,36 +2508,48 @@ const sharedWith = getSharedClients(c.id, c.name);
   /* ——— Analytics modal ——— */
   function openAnalytics(){
     const body=document.getElementById("analytics-body");
-    const active=state.clients.filter(c=>!c.archived);
+    // Pending clients excluded from analytics entirely
+    const active=state.clients.filter(c=>!c.archived && !c.pending);
+    const pendingCount = state.clients.filter(c => !c.archived && c.pending).length;
     const totalClients=active.length;
-const totalWeekEquiv=active.reduce((sum,c)=>sum+freqWeight(c.frequency),0);
+    const totalWeekEquiv=active.reduce((sum,c)=>sum+freqWeight(c.frequency),0);
+
+    const statBlock = (label, value, accent) => `
+      <div class="analytics-stat">
+        <div class="analytics-stat-label">${label}</div>
+        <strong style="${accent ? `color:${accent};` : ''}">${value}</strong>
+      </div>`;
 
     let html=`<div class="analytics-summary-bar">
-      <div><div style="font-size:.7rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Total active clients</div><strong>${totalClients}</strong></div>
-      <div style="text-align:right;"><div style="font-size:.7rem;color:var(--text-muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px;">Combined sessions / week</div><strong>${totalWeekEquiv.toFixed(2)}</strong></div>
+      ${statBlock("Total active clients", totalClients)}
+      ${statBlock("Pending clients", pendingCount, pendingCount > 0 ? "#6b7280" : null)}
+      ${statBlock("Combined sessions / week", totalWeekEquiv.toFixed(2))}
     </div><div class="analytics-grid">`;
 
     state.staff.forEach((s,i)=>{
-      // All clients where this therapist appears (no primary/secondary distinction)
       const myClients=active.filter(c=>clientTherapists(c).includes(s.name));
       if(!myClients.length) return;
       const col=THERAPIST_PIN_COLORS[i%THERAPIST_PIN_COLORS.length];
-const weekEquiv=myClients.reduce((sum,c)=>sum+freqWeight(c.frequency),0);
-const freqMap={};
+      const weekEquiv=myClients.reduce((sum,c)=>sum+freqWeight(c.frequency),0);
+      const freqMap={};
       myClients.forEach(c=>{
         const fl=String(c.frequency||"other").toLowerCase();
-        if(fl==="?") return; // exclude ? entirely
+        if(fl==="pending") return;
         const label=FREQ_CANONICAL[fl]||(c.frequency||"Other");
         freqMap[label]=(freqMap[label]||0)+1;
       });
-      // Order by preferred display order, then any unknown values after
       const knownEntries=FREQ_DISPLAY_ORDER.filter(f=>freqMap[f]).map(f=>[f,freqMap[f]]);
       const unknownEntries=Object.entries(freqMap).filter(([f])=>!FREQ_DISPLAY_ORDER.includes(f));
       const freqEntries=[...knownEntries,...unknownEntries];
       const maxCount=freqEntries.length?Math.max(...freqEntries.map(e=>e[1])):1;
-      const freqRows=freqEntries.map(([freq,count])=>
-        `<div class="analytics-freq-row"><span class="freq-name">${escapeHtml(freq)}</span><div class="analytics-bar-wrap"><div class="analytics-bar-fill" style="width:${Math.round((count/maxCount)*100)}%;background:${col};opacity:.75;"></div></div><span class="freq-count">${count}</span></div>`
-      ).join("");
+      const freqRows=freqEntries.map(([freq,count])=>{
+        const isReactive = freq === "Reactive";
+        const rowCls = isReactive ? "analytics-freq-row is-reactive" : "analytics-freq-row";
+        const nameCell = isReactive
+          ? `<span class="freq-name"><span class="reactive-dot"></span><strong>${escapeHtml(freq)}</strong></span>`
+          : `<span class="freq-name">${escapeHtml(freq)}</span>`;
+        return `<div class="${rowCls}">${nameCell}<div class="analytics-bar-wrap"><div class="analytics-bar-fill" style="width:${Math.round((count/maxCount)*100)}%;background:${col};opacity:.75;"></div></div><span class="freq-count">${count}</span></div>`;
+      }).join("");
       html+=`<div class="analytics-card">
         <div class="analytics-card-head">
           <span class="th-dot" style="background:${col};"></span>
@@ -1703,12 +2563,54 @@ const freqMap={};
 
     html+=`</div>`;
     if(!active.length) html+=`<p style="color:var(--text-muted);text-align:center;padding:24px 0;">No active clients yet.</p>`;
-    html+=`<p style="font-size:.72rem;color:var(--text-muted);margin-top:12px;line-height:1.5;">Sessions/week weights: Twice weekly=2.0 · Weekly=1.0 · Fortnightly=0.5 · Monthly=0.25 · As needed=0.1 · Other=0. Each client counts toward every therapist assigned to them.</p>`;
+
+    const pendingNote = pendingCount > 0
+      ? `<p style="font-size:.72rem;color:var(--text-muted);margin-top:12px;line-height:1.5;"><strong>Note:</strong> ${pendingCount} pending client${pendingCount!==1?"s are":" is"} excluded from per-therapist figures above (no therapist assigned yet).</p>`
+      : "";
+    html+=`<p style="font-size:.72rem;color:var(--text-muted);margin-top:12px;line-height:1.5;">Sessions/week weights: Twice weekly=2.0 · Weekly=1.0 · Fortnightly=0.5 · Monthly=0.25 · Reactive=0 · Other=0.</p>${pendingNote}`;
 
     body.innerHTML=html;
     document.getElementById("modal-analytics-overlay").classList.remove("hidden");
   }
   function closeAnalytics(){document.getElementById("modal-analytics-overlay").classList.add("hidden");}
+
+  /* ——— Pending clients modal ——— */
+  function openPendingModal(){
+    const tbody=document.getElementById("pending-tbody"),empty=document.getElementById("pending-empty");
+    const pending=state.clients.filter(c=>!c.archived && c.pending);
+    tbody.innerHTML="";
+    if(!pending.length){empty.classList.remove("hidden");}
+    else {
+      empty.classList.add("hidden");
+      pending.forEach(c=>{
+        const tr=document.createElement("tr");
+        tr.innerHTML=`
+          <td class="col-ribbon" style="background:${PENDING_PIN_COLOR};" aria-hidden="true"></td>
+          <td>${escapeHtml(c.name)}</td>
+          <td>${escapeHtml(c.address)}</td>
+          <td>${escapeHtml(c.lga)}</td>
+          <td>${escapeHtml(c.therapyService||"")}</td>
+          <td style="text-align:right;padding-right:12px;">
+            <div style="display:inline-flex;gap:6px;align-items:center;">
+              <button type="button" class="btn btn-ghost" data-edit="${c.id}" style="padding:5px 10px;font-size:.8125rem;">Edit / Assign</button>
+              <button type="button" class="btn btn-danger" data-archive="${c.id}" style="padding:5px 10px;font-size:.8125rem;">Archive</button>
+            </div>
+          </td>`;
+        tr.querySelector("[data-edit]").addEventListener("click",()=>{
+          closePendingModal();
+          openEditClient(c.id);
+        });
+        tr.querySelector("[data-archive]").addEventListener("click",()=>{
+          if(!confirm(`Archive "${c.name}"?`)) return;
+          c.archived=true;
+          saveState(); renderAll(); openPendingModal();
+        });
+        tbody.appendChild(tr);
+      });
+    }
+    document.getElementById("pending-overlay").classList.remove("hidden");
+  }
+  function closePendingModal(){document.getElementById("pending-overlay").classList.add("hidden");}
 
   /* ——— Archive ——— */
   function archiveClient(id){
@@ -1724,14 +2626,15 @@ const freqMap={};
     else{
       empty.classList.add("hidden");
       archived.forEach(c=>{
-        const col=therapistColorForName(c.leadTherapist);
+        const col=clientPinColor(c);
         const tr=document.createElement("tr");
+        const therapistCell = c.pending ? '<em style="color:var(--text-muted);">Pending</em>' : escapeHtml(clientTherapists(c).join(", "));
         tr.innerHTML=`
           <td class="col-ribbon" style="background:${col};" aria-hidden="true"></td>
           <td>${escapeHtml(c.name)}</td>
           <td>${escapeHtml(c.address)}</td>
           <td>${escapeHtml(c.lga)}</td>
-          <td>${escapeHtml(clientTherapists(c).join(", "))}</td>
+          <td>${therapistCell}</td>
           <td style="text-align:right;padding-right:12px;">
             <div style="display:inline-flex;gap:6px;align-items:center;">
               <button type="button" class="btn btn-ghost" data-restore="${c.id}" style="padding:5px 10px;font-size:.8125rem;">Restore</button>
@@ -1752,11 +2655,6 @@ const freqMap={};
   function closeArchive(){document.getElementById("archive-overlay").classList.add("hidden");}
 
   /* ——— Export / Import ——— */
-  function commentsToExportString(comments){if(!comments||!comments.length)return "";return comments.map(n=>`${n.at}||${n.text}`).join("|||");}
-  function importStringToComments(str){
-    if(!str||!str.trim())return[];
-    return str.split("|||").map(entry=>{const idx=entry.indexOf("||");if(idx===-1)return{at:"Imported",text:entry.trim(),imported:true,iso:new Date().toISOString()};return{at:entry.slice(0,idx).trim(),text:entry.slice(idx+2).trim(),imported:true,iso:new Date().toISOString()};}).filter(c=>c.text);
-  }
   function exportVisibleCsv(){
     const rows=sortClients(visibleClientsForTable());
     const lines=[CSV_HEADERS.join(",")];
@@ -1766,7 +2664,8 @@ const freqMap={};
         csvEscape(c.address),csvEscape(c.lga),csvEscape(c.frequency),
         csvEscape(clientTherapists(c).join(", ")),
         csvEscape(c.phone||""),csvEscape(c.email||""),
-        csvEscape(c.therapyService||""),csvEscape(commentsToExportString(c.comments))
+        csvEscape(c.therapyService||""),
+        csvEscape(c.pending ? "Yes" : "")
       ].join(","));
     });
     const blob=new Blob(["\uFEFF"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"});
@@ -1784,7 +2683,8 @@ const freqMap={};
         const lines=text.split(/\r?\n/).filter(l=>l.length);
         if(!lines.length){alert("The file is empty.");return;}
         const headers=parseCsvLine(lines[0]).map(h=>h.trim());
-        const colMap={"Name":"Name","Session types":"Session types","Session address":"Session address","Address":"Session address","LGA":"LGA","Frequency":"Frequency","Therapists":"Therapists","Therapist":"Therapists","Lead therapist":"Therapists","Other therapists":"OtherTherapists","Contact":"Contact","Email":"Email","Therapy Service":"Therapy Service","Comments":"Comments"};
+        // Comments column is silently ignored (mapped but not used on new records).
+        const colMap={"Name":"Name","Session types":"Session types","Session address":"Session address","Address":"Session address","LGA":"LGA","Frequency":"Frequency","Therapists":"Therapists","Therapist":"Therapists","Lead therapist":"Therapists","Other therapists":"OtherTherapists","Contact":"Contact","Email":"Email","Therapy Service":"Therapy Service","Pending":"Pending","Comments":"IgnoredComments"};
         const idx={};headers.forEach((h,i)=>{const mapped=colMap[h];if(mapped)idx[mapped]=i;});
         const get=(key,cells)=>{const i=idx[key];return i!==undefined?String(cells[i]??"").trim():"";};
         if(idx["Name"]===undefined||idx["Session address"]===undefined){alert("Import needs at least Name and Address columns.");return;}
@@ -1795,21 +2695,32 @@ const freqMap={};
           if(!name&&!address) continue;
           const sessionRaw=get("Session types",cells);
           const sessionTypes=sessionRaw?sessionRaw.split(/[;,]/).map(s=>s.trim().toLowerCase()).filter(Boolean):["home"];
-          const lga=get("LGA",cells)||"Newcastle",frequency=get("Frequency",cells)||"Weekly";
-          // Build therapists array from new or old format
+          const lga=get("LGA",cells)||"Newcastle";
+          let frequency=get("Frequency",cells)||"Weekly";
+          // Remap legacy frequencies on import
+          const fl=frequency.toLowerCase();
+          if (fl==="as needed"||fl==="tbc"||fl==="tbd"||fl==="?") frequency="Reactive";
+
+          const pendingRaw=get("Pending",cells).toLowerCase();
+          const isPending = pendingRaw==="yes"||pendingRaw==="true"||pendingRaw==="1";
+
           let therapists=[];
           const thStr=get("Therapists",cells);
           if(thStr) therapists=thStr.split(",").map(s=>s.trim()).filter(Boolean);
           if(!therapists.length){const ot=get("OtherTherapists",cells);if(ot)therapists=[...therapists,...ot.split(",").map(s=>s.trim()).filter(Boolean)];}
-          if(!therapists.length&&state.staff[0]) therapists=[state.staff[0].name];
+          if(isPending){ therapists=[]; frequency="Pending"; }
+          else if(!therapists.length&&state.staff[0]) therapists=[state.staff[0].name];
+
           const phone=get("Contact",cells)||"",email=get("Email",cells)||"";
+          // Therapy service — preserve whatever is in the CSV (even if legacy like "AHA");
+          // migrateState won't auto-change it, and edit form will force a valid pick next time.
           let therapyService=get("Therapy Service",cells);
-          if(!therapyService||!THERAPY_SERVICES.includes(therapyService)) therapyService="Early Childhood";
-          const importedComments=importStringToComments(get("Comments",cells));
+          if(!therapyService) therapyService="OT";
+
           let lat,lng;
           const geo=await geocodeAddress(address||"Newcastle NSW");
           if(geo){lat=geo.lat;lng=geo.lng;}else{lat=-32.85+(Math.random()-.5)*.12;lng=151.78+(Math.random()-.5)*.15;}
-          state.clients.push({id:uid(),name:name||"Unknown",sessionTypes:sessionTypes.length?sessionTypes:["home"],address:address||"—",lga,frequency,therapyService,therapists,leadTherapist:therapists[0]||"",phone,email,lat,lng,comments:importedComments,archived:false});
+          state.clients.push({id:uid(),name:name||"Unknown",sessionTypes:sessionTypes.length?sessionTypes:["home"],address:address||"—",lga,frequency,therapyService,therapists,leadTherapist:therapists[0]||"",phone,email,lat,lng,comments:[],archived:false,pending:isPending});
           added++;
         }
         if(!added){alert("No data rows could be imported.");return;}
@@ -1822,54 +2733,54 @@ const freqMap={};
 
   function resetAllFilters(){
     document.querySelectorAll(".map-lga,.map-th,.map-therapy").forEach(cb=>cb.checked=false);
+    const pendingToggle=document.getElementById("map-show-pending");
+    if(pendingToggle) pendingToggle.checked=false;
     document.getElementById("filter-search").value="";
     document.getElementById("filter-table-lga").value="";
     document.getElementById("filter-table-lead").value="";
     document.getElementById("filter-table-therapy").value="";
-sortState={key:"name",dir:1};
+    sortState={key:"name",dir:1};
     currentPage=1;
     document.querySelectorAll(".data-table thead th[data-sort]").forEach(h=>{h.classList.remove("sorted");const ind=h.querySelector(".sort-ind");if(ind)ind.textContent="↕";});
     renderAll();
   }
 
-async function clearAllData(){
-    const first = confirm("This will permanently delete ALL clients from the database.\n\nAre you sure?");
-    if(!first) return;
-    const second = confirm("Second confirmation: this cannot be undone.\n\nDelete everything?");
-    if(!second) return;
-
-    try {
-      // Clear Firebase
-      if(FIREBASE_ENABLED && _syncRef){
-        await _syncRef.remove();
-        console.log("✓ Firebase cleared");
-      }
-      // Clear localStorage
-      localStorage.removeItem(STORAGE_KEY);
-      // Reset in-memory state to defaults (empty clients, keep staff)
-      state.clients = [];
-      renderAll();
-      setSyncStatus("synced");
-      alert("All client data has been deleted.\n\nYou can now re-import your updated spreadsheet.");
-    } catch(e) {
-      console.error("Clear failed:", e);
-      alert("Something went wrong: " + e.message);
-    }
-  }
-  
   function escapeHtml(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
   function escapeAttr(s){return String(s).replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");}
 
-/* ——— Back to top ——— */
+  /* ——— Back to top ——— */
   const _btt=document.getElementById("btn-back-to-top");
   window.addEventListener("scroll",()=>_btt.classList.toggle("visible",window.scrollY>300),{passive:true});
   _btt.addEventListener("click",()=>window.scrollTo({top:0,behavior:"smooth"}));
 
-  /* ——— Auto-login if session active ——— */
-  if(sessionStorage.getItem("vivid_unlocked")==="1"){
-    loginScreen.classList.add("hidden");appEl.classList.remove("hidden");
-    initApp();
-  }
+  /* ——— Bootstrap: check for existing session, else show login screen ——— */
+  (function bootstrap() {
+    const sessionRaw = sessionStorage.getItem("vivid_session");
+    if (sessionRaw) {
+      try {
+        const sess = JSON.parse(sessionRaw);
+        // Tech login: synthetic admin, not tied to a Firebase staff record
+        if (sess.id === TECH_LOGIN_ID) {
+          currentUser = { id: TECH_LOGIN_ID, name: TECH_LOGIN_NAME, isAdmin: true, isTechLogin: true };
+          loginScreen.classList.add("hidden"); appEl.classList.remove("hidden");
+          initApp();
+          return;
+        }
+        // Regular staff session: verify ID still exists and refresh name/isAdmin in case they changed
+        const staff = state.staff.find(s => s.id === sess.id);
+        if (staff) {
+          currentUser = { id: staff.id, name: staff.name, isAdmin: !!staff.isAdmin };
+          loginScreen.classList.add("hidden"); appEl.classList.remove("hidden");
+          initApp();
+          // If they haven't completed forced change (e.g. closed tab mid-flow), re-gate them
+          if (!staff.hasChangedPassword) openForcePasswordModal();
+          return;
+        }
+      } catch(e) { /* fall through to login */ }
+    }
+    // No valid session — show login & start Firebase pre-load so the dropdown populates.
+    initFirebasePreLogin();
+  })();
 </script>
 </body>
 </html>
